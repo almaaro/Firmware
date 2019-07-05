@@ -74,7 +74,8 @@ private:
 
 	DEFINE_PARAMETERS(
 		(ParamFloat<px4::params::SENS_BARO_QNH>) _param_sens_baro_qnh,
-		(ParamFloat<px4::params::BARO_AS_COMP>) _param_sens_baro_as_comp
+		(ParamFloat<px4::params::BARO_AS_COMP>) _param_sens_baro_as_comp,
+		(ParamFloat<px4::params::SENS_QNH_RATE>) _param_sens_qnh_rate
 	)
 
 	uORB::Publication<vehicle_air_data_s> _vehicle_air_data_pub{ORB_ID(vehicle_air_data)};
@@ -109,4 +110,9 @@ private:
 	int8_t _selected_sensor_sub_index{-1};
 
 	airspeed_s _airspeed{};
+
+	/* baro qnh changes */
+	float _baro_qnh_rate_limited{0.0f};
+	hrt_abstime _baro_qnh_last_update_t{0};
+
 };
