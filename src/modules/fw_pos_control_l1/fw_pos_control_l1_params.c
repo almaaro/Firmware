@@ -410,7 +410,6 @@ PARAM_DEFINE_FLOAT(FW_LND_AIRSPD_SC, 1.3f);
 PARAM_DEFINE_FLOAT(FW_LND_THRTC_SC, 1.0f);
 
 
-
 /*
  * TECS parameters
  *
@@ -459,6 +458,7 @@ PARAM_DEFINE_FLOAT(FW_AIRSPD_MAX, 20.0f);
  * @increment 0.5
  * @group FW TECS
  */
+
 PARAM_DEFINE_FLOAT(FW_AIRSPD_TRIM, 15.0f);
 
 /**
@@ -501,6 +501,23 @@ PARAM_DEFINE_FLOAT(FW_T_CLMB_MAX, 5.0f);
  * @group FW TECS
  */
 PARAM_DEFINE_FLOAT(FW_T_SINK_MIN, 2.0f);
+
+/**
+ * Minimum descent rate with flaps deployed
+ *
+ * This is the sink rate of the aircraft with the throttle
+ * set to THR_MIN and flown at the same airspeed as used
+ * to measure FW_T_CLMB_MAX. The flaps must be in the landing
+ * configuration.
+ *
+ * @unit m/s
+ * @min 1.0
+ * @max 5.0
+ * @decimal 1
+ * @increment 0.5
+ * @group FW TECS
+ */
+PARAM_DEFINE_FLOAT(FW_T_SINK_FLPS, 2.0f);
 
 /**
  * Maximum descent rate
@@ -740,6 +757,19 @@ PARAM_DEFINE_FLOAT(FW_GND_SPD_MIN, 5.0f);
 PARAM_DEFINE_FLOAT(FW_T_WINGSPAN, 1.0f);
 
 /**
+ * The slope between angle of attack and the coefficient of lift.
+ * Calculated from the wing airfoil's Alpha v Cl polar as
+ * FW_T_ALPHA_V_CL = (delta Alpha)/(delta Cl)
+ *
+ * @min 0.0
+ * @max 10.0
+ * @decimal 2
+ * @increment 0.01
+ * @group FW TECS
+ */
+PARAM_DEFINE_FLOAT(FW_T_CL_ALPHA, 0.0f);
+
+/**
  * Plane all up weight
  *
  * Used for induced drag coefficient and throttle setting calculation.
@@ -752,6 +782,18 @@ PARAM_DEFINE_FLOAT(FW_T_WINGSPAN, 1.0f);
  * @group FW TECS
  */
 PARAM_DEFINE_FLOAT(FW_T_AUW, 1.0f);
+
+/**
+ * The wing area in square meters.
+ *
+ * @unit m^2
+ * @min 0.0
+ * @max 10.0
+ * @decimal 2
+ * @increment 0.01
+ * @group FW TECS
+ */
+PARAM_DEFINE_FLOAT(FW_T_WING_AREA, 0.0f);
 
 /**
  * Propeller (or fan) diameter in meters.

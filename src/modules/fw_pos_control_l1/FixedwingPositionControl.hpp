@@ -264,6 +264,9 @@ private:
 	ECL_L1_Pos_Controller	_l1_control;
 	TECS			_tecs;
 
+	//Flap setting
+	float _landing_flaps_applied{0.0f};
+
 	enum FW_POSCTRL_MODE {
 		FW_POSCTRL_MODE_AUTO,
 		FW_POSCTRL_MODE_POSITION,
@@ -403,10 +406,13 @@ private:
 		(ParamFloat<px4::params::FW_T_THRO_CONST>) _param_fw_t_thro_const,
 		(ParamFloat<px4::params::FW_T_TIME_CONST>) _param_fw_t_time_const,
 		(ParamFloat<px4::params::FW_T_VERT_ACC>) _param_fw_t_vert_acc,
-                (ParamFloat<px4::params::FW_T_WINGSPAN>) _param_fw_t_wingspan,
-                (ParamFloat<px4::params::FW_T_AUW>) _param_fw_t_auw,
-                (ParamFloat<px4::params::FW_T_PROP_DIA>) _param_fw_t_prop_dia,
-                (ParamBool<px4::params::FW_T_ADV_THR>) _param_fw_t_adv_thr,
+		(ParamFloat<px4::params::FW_T_WINGSPAN>) _param_fw_t_wingspan,
+		(ParamFloat<px4::params::FW_T_AUW>) _param_fw_t_auw,
+		(ParamFloat<px4::params::FW_T_PROP_DIA>) _param_fw_t_prop_dia,
+		(ParamBool<px4::params::FW_T_ADV_THR>) _param_fw_t_adv_thr,
+		(ParamFloat<px4::params::FW_T_VERT_ACC>) _param_fw_t_vert_acc,
+		(ParamFloat<px4::params::FW_T_CL_ALPHA>) _param_fw_t_cl_alpha,
+		(ParamFloat<px4::params::FW_T_WING_AREA>) _param_fw_t_wing_area,
 
 		(ParamFloat<px4::params::FW_THR_ALT_SCL>) _param_fw_thr_alt_scl,
 		(ParamFloat<px4::params::FW_THR_CRUISE>) _param_fw_thr_cruise,
@@ -421,6 +427,7 @@ private:
 		(ParamInt<px4::params::FW_ARSP_MODE>) _param_fw_arsp_mode,
 
 		(ParamFloat<px4::params::FW_PSP_OFF>) _param_fw_psp_off,
+		(ParamFloat<px4::params::FW_PSP_OFF_FLPS>) _param_fw_psp_off_flps,
 		(ParamFloat<px4::params::FW_RSP_OFF>) _param_fw_rsp_off,
 		(ParamFloat<px4::params::FW_MAN_P_MAX>) _param_fw_man_p_max,
 		(ParamFloat<px4::params::FW_MAN_R_MAX>) _param_fw_man_r_max,
