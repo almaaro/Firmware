@@ -1152,12 +1152,12 @@ Mission::set_mission_items()
 		}
 	}
 
-	/* Save the distance between the current sp and the previous one */
-	if (pos_sp_triplet->current.valid && pos_sp_triplet->previous.valid) {
+	/* Save the distance between the current sp and our current position */
+	if (pos_sp_triplet->current.valid) {
 
 		_distance_current_previous = get_distance_to_next_waypoint(
 						     pos_sp_triplet->current.lat, pos_sp_triplet->current.lon,
-						     pos_sp_triplet->previous.lat, pos_sp_triplet->previous.lon);
+						     _navigator->get_global_position()->lat, _navigator->get_global_position()->lon);
 	}
 
 	_navigator->set_position_setpoint_triplet_updated();
@@ -1420,7 +1420,8 @@ Mission::altitude_sp_foh_update()
 		 * radius around the current waypoint
 		 **/
 		float delta_alt = (get_absolute_altitude_for_item(_mission_item) - pos_sp_triplet->previous.alt);
-		float grad = -delta_alt / (_distance_current_previous - acc_rad);
+		// avoiding division by 0
+		float grad = -delta_alt / math::max((_distance_current_previous - acc_rad), 0.1f);
 		float a = pos_sp_triplet->previous.alt - grad * _distance_current_previous;
 		pos_sp_triplet->current.alt = a + grad * _min_current_sp_distance_xy;
 	}
