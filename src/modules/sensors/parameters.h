@@ -100,4 +100,10 @@ void initialize_parameter_handles(ParameterHandles &parameter_handles);
  */
 void update_parameters(const ParameterHandles &parameter_handles, Parameters &parameters);
 
+/**
+ * Read out the parameters using the handles into the parameters struct. This is the version to be used while armed.
+ * @return 0 on success, <0 on error
+ */
+int update_parameters_armed(const ParameterHandles &parameter_handles, Parameters &parameters);
+
 } /* namespace sensors */

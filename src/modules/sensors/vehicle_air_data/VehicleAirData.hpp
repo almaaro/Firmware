@@ -71,7 +71,8 @@ private:
 	static constexpr int MAX_SENSOR_COUNT = 3;
 
 	DEFINE_PARAMETERS(
-		(ParamFloat<px4::params::SENS_BARO_QNH>) _param_sens_baro_qnh
+                (ParamFloat<px4::params::SENS_BARO_QNH>) _param_sens_baro_qnh,
+                (ParamFloat<px4::params::SENS_QNH_RATE>) _param_sens_qnh_rate
 	)
 
 	uORB::Publication<vehicle_air_data_s> _vehicle_air_data_pub{ORB_ID(vehicle_air_data)};
@@ -103,4 +104,8 @@ private:
 	uint8_t _priority[MAX_SENSOR_COUNT] {};
 
 	int8_t _selected_sensor_sub_index{-1};
+
+        /* baro qnh changes */
+        float _baro_qnh_rate_limited{0.0f};
+        hrt_abstime _baro_qnh_last_update_t{0};
 };

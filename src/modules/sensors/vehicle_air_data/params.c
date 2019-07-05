@@ -43,3 +43,22 @@
  *
  */
 PARAM_DEFINE_FLOAT(SENS_BARO_QNH, 1013.25f);
+
+/**
+  * QNH change rate for barometer.
+  *
+  * Too high a value will lead to EKF errors and possibly crash the vehicle.
+  * Test by arming the plane, changing the QNH by
+  * eg. 10 hPa and logging the global position altitude for 10 minutes.
+  * The altitude should slowly change while being valid for all the time.
+  * In case of any altitude anomalities, halve the value. A good
+  * starting point is 0.1, which means about 0.8m/min rate of change to the
+  * pressure altimeter. Higher values are faster but more prone to EKF errors.
+  *
+  *
+  * @min 0
+  * @max 0.5
+  * @group Sensors
+  * @unit hPa/min
+  */
+ PARAM_DEFINE_FLOAT(SENS_QNH_RATE, 0.0f);
