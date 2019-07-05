@@ -724,3 +724,61 @@ PARAM_DEFINE_FLOAT(FW_T_SRATE_P, 0.02f);
  * @group FW TECS
  */
 PARAM_DEFINE_FLOAT(FW_GND_SPD_MIN, 5.0f);
+
+/**
+ * Wingspan
+ *
+ * Used for induced drag coefficient calculation.
+ *
+ * @unit m
+ * @min 0.1
+ * @max 10.0
+ * @decimal 2
+ * @increment 0.01
+ * @group FW TECS
+ */
+PARAM_DEFINE_FLOAT(FW_T_WINGSPAN, 1.0f);
+
+/**
+ * Plane all up weight
+ *
+ * Used for induced drag coefficient and throttle setting calculation.
+ *
+ * @unit kg
+ * @min 0.1
+ * @max 100.0
+ * @decimal 2
+ * @increment 0.01
+ * @group FW TECS
+ */
+PARAM_DEFINE_FLOAT(FW_T_AUW, 1.0f);
+
+/**
+ * Propeller (or fan) diameter in meters.
+ *
+ * Used for advanced throttle setting calculation. If the vehicle has more than 1
+ * motor, multiply the diameter by the square root of the number of motors.
+ *
+ * @unit m
+ * @min 0.01
+ * @max 1.0
+ * @decimal 3
+ * @increment 0.001
+ * @group FW TECS
+ */
+PARAM_DEFINE_FLOAT(FW_T_PROP_DIA, 0.2f);
+
+/**
+ * Use advanced throttle calculation algorithm
+ *
+ * Setting this to true will improve the throttle control, but requires the following:
+ * FW_T_WINGSPAN, FW_T_AUW and FW_T_PROP_DIA must be set.
+ * FW_AIRSPD_MAX must be set to the airspeed that is reached in level flight with
+ * throttle set to FW_THR_MAX. FW_T_CLMB_MAX and FW_T_SINK_MIN must be set up while flying
+ * at the airspeed of FW_AIRSPD_TRIM.
+ *
+ *
+ * @boolean
+ * @group FW TECS
+ */
+PARAM_DEFINE_INT32(FW_T_ADV_THR, 0);
