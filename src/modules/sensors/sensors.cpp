@@ -201,7 +201,6 @@ private:
 	void		adc_poll();
 
 	void		InitializeVehicleIMU();
-
 };
 
 Sensors::Sensors(bool hil_enabled) :
@@ -322,6 +321,8 @@ void Sensors::diff_pres_poll()
 		if (PX4_ISFINITE(airspeed.indicated_airspeed_m_s) && PX4_ISFINITE(airspeed.true_airspeed_m_s)) {
 			_airspeed_pub.publish(airspeed);
 		}
+
+		_indicated_airspeed_m_s = airspeed.indicated_airspeed_m_s;
 	}
 }
 
