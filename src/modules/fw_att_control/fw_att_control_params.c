@@ -430,11 +430,11 @@ PARAM_DEFINE_FLOAT(FW_WR_FF, 0.2f);
 PARAM_DEFINE_FLOAT(FW_RSP_OFF, 0.0f);
 
 /**
- * Pitch setpoint offset
+ * Pitch setpoint offset while flying level at the trim airspeed.
  *
  * An airframe specific offset of the pitch setpoint in degrees, the value is
  * added to the pitch setpoint and should correspond to the typical cruise
- * speed of the airframe.
+ * pitch of the airframe.
  *
  * @unit deg
  * @min -90.0
@@ -444,6 +444,22 @@ PARAM_DEFINE_FLOAT(FW_RSP_OFF, 0.0f);
  * @group FW Attitude Control
  */
 PARAM_DEFINE_FLOAT(FW_PSP_OFF, 0.0f);
+
+/**
+ * Pitch setpoint offset with landing flaps deployed while flying level at the trim airspeed.
+ *
+ * An airframe specific offset of the pitch setpoint in degrees, the value is
+ * added to the pitch setpoint when the flaps are extended to the
+ * landing configuration.
+ *
+ * @unit deg
+ * @min -90.0
+ * @max 90.0
+ * @decimal 1
+ * @increment 0.5
+ * @group FW Attitude Control
+ */
+PARAM_DEFINE_FLOAT(FW_PSP_OFF_FLPS, 0.0f);
 
 /**
  * Max manual roll

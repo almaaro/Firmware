@@ -93,7 +93,7 @@ FixedwingPositionControl::parameters_update()
 	_l1_control.set_roll_slew_rate(radians(_param_fw_l1_r_slew_max.get()));
 
 	// TECS parameters
-	_tecs.set_max_climb_rate(_param_fw_t_clmb_max.get());
+        _tecs.set_max_climb_rate(_param_fw_t_clmb_max.get());
 	_tecs.set_max_sink_rate(_param_fw_t_sink_max.get());
 	_tecs.set_speed_weight(_param_fw_t_spdweight.get());
 	_tecs.set_indicated_airspeed_min(_param_fw_airspd_min.get());
@@ -111,6 +111,10 @@ FixedwingPositionControl::parameters_update()
 	_tecs.set_heightrate_p(_param_fw_t_hrate_p.get());
 	_tecs.set_heightrate_ff(_param_fw_t_hrate_ff.get());
 	_tecs.set_speedrate_p(_param_fw_t_srate_p.get());
+        _tecs.set_pitchsp_offset_rad(radians(_param_fw_psp_off.get()));
+        _tecs.set_pitchsp_offset_landing_flaps_rad(radians(_param_fw_psp_off_flps.get()));
+        _tecs.set_cl_to_alpha_rad_slope(radians(_param_fw_t_cl_alpha.get()));
+        _tecs.set_wing_area(_param_fw_t_wing_area.get());
 
 	// Landing slope
 	/* check if negative value for 2/3 of flare altitude is set for throttle cut */
@@ -1580,6 +1584,26 @@ FixedwingPositionControl::Run()
 			_att_sp.roll_body += radians(_param_fw_rsp_off.get());
 			_att_sp.pitch_body += radians(_param_fw_psp_off.get());
 
+                        /* Giving the flaps setting to tecs */
+                        float flap_control = 0.0f;
+
+                        if (_att_sp.apply_flaps == vehicle_attitude_setpoint_s::FLAPS_LAND) {
+                                flap_control = 1.0f;
+
+                        } else {
+                                flap_control = 0.0f;
+                        }
+
+                        // move the actual control value continuous with time, full flap travel in 1sec
+                        if (fabsf(_landing_flaps_applied - flap_control) > 0.01f) {
+                                _landing_flaps_applied += (_landing_flaps_applied - flap_control) < 0 ? dt : -dt;
+
+                        } else {
+                                _landing_flaps_applied = flap_control;
+                        }
+
+                        _tecs.set_landing_flaps_applied(_landing_flaps_applied);
+
 			if (_control_mode.flag_control_manual_enabled) {
 				_att_sp.roll_body = constrain(_att_sp.roll_body, -radians(_param_fw_man_r_max.get()),
 							      radians(_param_fw_man_r_max.get()));
@@ -1604,6 +1628,7 @@ FixedwingPositionControl::Run()
 					status_publish();
 
 				}
+
 			}
 		}
 
@@ -1727,7 +1752,7 @@ FixedwingPositionControl::tecs_update_pitch_throttle(float alt_sp, float airspee
 					      || mode == tecs_status_s::TECS_MODE_LAND_THROTTLELIM));
 
 	/* Using tecs library */
-	float pitch_for_tecs = _pitch - radians(_param_fw_psp_off.get());
+	float pitch_for_tecs = _pitch;
 
 	/* filter speed and altitude for controller */
 	Vector3f accel_body(_vehicle_acceleration_sub.get().xyz);
