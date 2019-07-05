@@ -43,3 +43,19 @@
  *
  */
 PARAM_DEFINE_FLOAT(SENS_BARO_QNH, 1013.25f);
+
+/**
+ * Airspeed compensation for barometer altitude.
+ *
+ * Can be used to compensate for changes in barometric
+ * altitude caused by changes in airspeed.
+ *
+ * How to set this value:
+ * BARO_AS_COMP = -(change in pressure when airspeed increases from 0 to V)/V^2
+ *
+ * @min -1
+ * @max 1
+ * @group Sensors
+ * @unit 1/m/s^2
+ */
+PARAM_DEFINE_FLOAT(BARO_AS_COMP, 0.0f);
