@@ -117,8 +117,6 @@ static constexpr float HDG_HOLD_YAWRATE_THRESH = 0.15f;	// max yawrate at which 
 static constexpr float HDG_HOLD_MAN_INPUT_THRESH =
 	0.01f; // max manual roll/yaw input from user which does not change the locked heading
 
-static constexpr hrt_abstime T_ALT_TIMEOUT = 1_s; // time after which we abort landing if terrain estimate is not valid
-
 static constexpr float THROTTLE_THRESH =
 	0.05f;	///< max throttle from user which will not lead to motors spinning up in altitude controlled modes
 static constexpr float MANUAL_THROTTLE_CLIMBOUT_THRESH =
@@ -221,6 +219,16 @@ private:
 
 	bool _was_in_air{false};				///< indicated wether the plane was in the air in the previous interation*/
 	hrt_abstime _time_went_in_air{0};			///< time at which the plane went in the air
+
+	bool _land_rngfnd_bump_handled{false};			///< true when the rangefinder bump is handled */
+	float _land_touchdown_point_shift{0.0f};		///< how much the flare / glide slope will be moved after the rangefinder bump*/
+	float _land_prev_tecs_alt_sp{0.0};			///< the latest altitude setpoint that was sent to tecs*/
+
+	/* Values for adjusting the landing altitude */
+	float _land_terrain_alt_offset{0.0f};			///< offset that will be added to _pos_sp_curr_alt_unadjusted */
+	float _land_terrain_alt_offset_temporary{0.0f};		///< temporary value for storing the offset while in the landing phase */
+	float _pos_sp_curr_alt_unadjusted{0.0f};		///< original position setpoint altitude
+	float _pos_sp_prev_alt_unadjusted{0.0f};		///< original position setpoint altitude
 
 	/* Takeoff launch detection and runway */
 	LaunchDetector _launchDetector;
@@ -325,8 +333,8 @@ private:
 	 */
 	bool		update_desired_altitude(float dt);
 
-	bool		control_position(const Vector2f &curr_pos, const Vector2f &ground_speed, const position_setpoint_s &pos_sp_prev,
-					 const position_setpoint_s &pos_sp_curr, const position_setpoint_s &pos_sp_next);
+	bool		control_position(const Vector2f &curr_pos, const Vector2f &ground_speed, position_setpoint_s &pos_sp_prev,
+					 position_setpoint_s &pos_sp_curr, const position_setpoint_s &pos_sp_next);
 	void		control_takeoff(const Vector2f &curr_pos, const Vector2f &ground_speed, const position_setpoint_s &pos_sp_prev,
 					const position_setpoint_s &pos_sp_curr);
 	void		control_landing(const Vector2f &curr_pos, const Vector2f &ground_speed, const position_setpoint_s &pos_sp_prev,
@@ -379,8 +387,14 @@ private:
 		(ParamFloat<px4::params::FW_LND_HVIRT>) _param_fw_lnd_hvirt,
 		(ParamFloat<px4::params::FW_LND_THRTC_SC>) _param_fw_thrtc_sc,
 		(ParamFloat<px4::params::FW_LND_TLALT>) _param_fw_lnd_tlalt,
+                (ParamFloat<px4::params::FW_LND_MAX_MV>) _param_fw_lnd_max_mv,
+                (ParamFloat<px4::params::FW_LND_MV_ALT>) _param_fw_lnd_mv_alt,
+                (ParamFloat<px4::params::FW_LND_GS_TOL>) _param_fw_lnd_gs_tol,
+                (ParamFloat<px4::params::FW_LND_TERR_TO>) _param_fw_lnd_terr_to,
+                (ParamFloat<px4::params::FW_LND_WAIT_TERR>) _param_fw_lnd_wait_terr,
 		(ParamBool<px4::params::FW_LND_EARLYCFG>) _param_fw_lnd_earlycfg,
 		(ParamBool<px4::params::FW_LND_USETER>) _param_fw_lnd_useter,
+                (ParamBool<px4::params::FW_LND_REQ_TERR>) _param_fw_lnd_useter,
 
 		(ParamFloat<px4::params::FW_P_LIM_MAX>) _param_fw_p_lim_max,
 		(ParamFloat<px4::params::FW_P_LIM_MIN>) _param_fw_p_lim_min,
