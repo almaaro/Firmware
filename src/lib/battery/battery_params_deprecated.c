@@ -42,6 +42,8 @@
 /**
  * This parameter is deprecated. Please use BAT1_V_EMPTY instead.
  *
+ * Empty cell voltage (nominal load)
+ *
  * Defines the voltage where a single cell of battery 1 is considered empty.
  * The voltage should be chosen before the steep dropoff to 2.8V. A typical
  * lithium battery can only be discharged down to 10% before it drops off
@@ -58,8 +60,10 @@ PARAM_DEFINE_FLOAT(BAT_V_EMPTY, 3.5f);
 /**
  * This parameter is deprecated. Please use BAT1_V_CHARGED instead.
  *
- * Defines the voltage where a single cell of battery 1 is considered full
- * under a mild load. This will never be the nominal voltage of 4.2V
+ * Full cell voltage (nominal load)
+ *
+ * Defines the voltage where a single cell of the battery is considered full
+ * under nominal load. This will never be the nominal voltage of 4.2V
  *
  * @group Battery Calibration
  * @unit V
