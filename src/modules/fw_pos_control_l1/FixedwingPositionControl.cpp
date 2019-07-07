@@ -1582,7 +1582,6 @@ FixedwingPositionControl::Run()
 
 			// add attitude setpoint offsets
 			_att_sp.roll_body += radians(_param_fw_rsp_off.get());
-			_att_sp.pitch_body += radians(_param_fw_psp_off.get());
 
                         /* Giving the flaps setting to tecs */
                         float flap_control = 0.0f;
@@ -1597,6 +1596,7 @@ FixedwingPositionControl::Run()
                         // move the actual control value continuous with time, full flap travel in 1sec
                         if (fabsf(_landing_flaps_applied - flap_control) > 0.01f) {
                                 _landing_flaps_applied += (_landing_flaps_applied - flap_control) < 0 ? dt : -dt;
+                                _landing_flaps_applied = constrain(_landing_flaps_applied, 0.0f, 1.0f);
 
                         } else {
                                 _landing_flaps_applied = flap_control;
