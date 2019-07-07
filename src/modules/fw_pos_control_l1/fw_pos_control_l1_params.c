@@ -762,7 +762,7 @@ PARAM_DEFINE_FLOAT(FW_T_WINGSPAN, 1.0f);
  * FW_T_ALPHA_V_CL = (delta Alpha)/(delta Cl)
  *
  * @min 0.0
- * @max 10.0
+ * @max 30.0
  * @decimal 2
  * @increment 0.01
  * @group FW TECS
