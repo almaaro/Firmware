@@ -141,8 +141,8 @@ MissionBlock::is_mission_item_reached()
 		float dist_z = -1.0f;
 
 		float altitude_amsl = _mission_item.altitude_is_relative
-				      ? _mission_item.altitude + _navigator->get_home_position()->alt
-				      : _mission_item.altitude;
+				      ? _mission_item.altitude + _navigator->get_home_position()->alt + _navigator->get_terrain_alt_offset()
+				      : _mission_item.altitude + _navigator->get_terrain_alt_offset();
 
 		dist = get_distance_to_point_global_wgs84(_mission_item.lat, _mission_item.lon, altitude_amsl,
 				_navigator->get_global_position()->lat,
@@ -192,8 +192,8 @@ MissionBlock::is_mission_item_reached()
 			 * take-off procedures like leaving the landing gear down. */
 
 			float takeoff_alt = _mission_item.altitude_is_relative ?
-					    _mission_item.altitude :
-					    (_mission_item.altitude - _navigator->get_home_position()->alt);
+					    _mission_item.altitude + _navigator->get_terrain_alt_offset() :
+					    (_mission_item.altitude - _navigator->get_home_position()->alt) + _navigator->get_terrain_alt_offset();
 
 			float altitude_acceptance_radius = _navigator->get_altitude_acceptance_radius();
 
@@ -796,9 +796,9 @@ float
 MissionBlock::get_absolute_altitude_for_item(const mission_item_s &mission_item) const
 {
 	if (mission_item.altitude_is_relative) {
-		return mission_item.altitude + _navigator->get_home_position()->alt;
+		return mission_item.altitude + _navigator->get_home_position()->alt + _navigator->get_terrain_alt_offset();
 
 	} else {
-		return mission_item.altitude;
+		return mission_item.altitude + _navigator->get_terrain_alt_offset();
 	}
 }

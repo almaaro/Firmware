@@ -375,6 +375,8 @@ FixedwingPositionControl::status_publish()
 
 	pos_ctrl_status.yaw_acceptance = NAN;
 
+	pos_ctrl_status.terrain_alt_offset = _land_terrain_alt_offset;
+
 	pos_ctrl_status.timestamp = hrt_absolute_time();
 
 	_pos_ctrl_status_pub.publish(pos_ctrl_status);
@@ -567,7 +569,7 @@ FixedwingPositionControl::do_takeoff_help(float *hold_altitude, float *pitch_lim
 
 bool
 FixedwingPositionControl::control_position(const Vector2f &curr_pos, const Vector2f &ground_speed,
-		position_setpoint_s &pos_sp_prev, position_setpoint_s &pos_sp_curr, const position_setpoint_s &pos_sp_next)
+		const position_setpoint_s &pos_sp_prev, const position_setpoint_s &pos_sp_curr, const position_setpoint_s &pos_sp_next)
 {
 	float dt = 0.01f;
 
@@ -1335,12 +1337,12 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 			if (_land_onslope || _land_noreturn_vertical) {
 				// there has not been a valid estimate in a long time -> take it straight away
 				if (_time_last_t_alt == 0) {
-                                        _land_terrain_alt_offset_temporary = terrain_alt - (pos_sp_curr.alt - _land_terrain_alt_offset);
+                                        _land_terrain_alt_offset = terrain_alt - (pos_sp_curr.alt - _land_terrain_alt_offset_prev);
 
 				} else {
 					// use a low pass filter
-                                        _land_terrain_alt_offset_temporary = 0.05f * (terrain_alt - (pos_sp_curr.alt - _land_terrain_alt_offset)) +
-									     0.95f * _land_terrain_alt_offset_temporary;
+                                        _land_terrain_alt_offset = 0.05f * (terrain_alt - (pos_sp_curr.alt - _land_terrain_alt_offset_prev)) +
+                                                                             0.95f * _land_terrain_alt_offset;
 				}
 			}
 
@@ -1540,9 +1542,15 @@ landing_glideslope:
                         if (wp_distance < - _param_fw_lnd_max_mv.get() && _time_last_t_alt == 0) {
 				// if we don't have valid terrain here and we are under (terrain_alt + 0.5*FW_LND_FLALT), set the terrain altitude offset
 				// so that the landing altitude will be (our current altitude - 0.5*FW_LND_FLALT) on the next landing approach.
+<<<<<<< HEAD
                                 if (_time_last_t_alt == 0 && _current_altitude < terrain_alt + 0.5f * _landingslope.flare_relative_alt()) {
 					_land_terrain_alt_offset_temporary = _global_pos.alt - 0.5f * _landingslope.flare_relative_alt() -
 									     (terrain_alt - _land_terrain_alt_offset);
+=======
+				if (_time_last_t_alt == 0 && _global_pos.alt < terrain_alt + 0.5f * _landingslope.flare_relative_alt()) {
+					_land_terrain_alt_offset = _global_pos.alt - 0.5f * _landingslope.flare_relative_alt() -
+								   (terrain_alt - _land_terrain_alt_offset_prev);
+>>>>>>> moved the terrain altitude offset to be published in pos ctrl status and handled by the navigator
 				}
 
 				abort_landing(true);
@@ -1770,8 +1778,45 @@ FixedwingPositionControl::Run()
 							       radians(_param_fw_man_p_max.get()));
 			}
 
+<<<<<<< HEAD
 			Quatf q(Eulerf(_att_sp.roll_body, _att_sp.pitch_body, _att_sp.yaw_body));
 			q.copyTo(_att_sp.q_d);
+=======
+			// update the reset counters in any case
+			_alt_reset_counter = _global_pos.alt_reset_counter;
+			_pos_reset_counter = _global_pos.lat_lon_reset_counter;
+
+			_sub_sensors.update();
+			airspeed_poll();
+			_manual_control_sub.update(&_manual);
+			_pos_sp_triplet_sub.update(&_pos_sp_triplet);
+			vehicle_attitude_poll();
+			vehicle_command_poll();
+			vehicle_control_mode_poll();
+			_vehicle_land_detected_sub.update(&_vehicle_land_detected);
+			vehicle_status_poll();
+
+			Vector2f curr_pos((float)_global_pos.lat, (float)_global_pos.lon);
+			Vector2f ground_speed(_global_pos.vel_n, _global_pos.vel_e);
+
+			/*
+			 * Attempt to control position, on success (= sensors present and not in manual mode),
+			 * publish setpoint.
+			 * Adjust the position setpoint triplet altitudes according to the ground altitude offset
+			 */
+			if (control_position(curr_pos, ground_speed, _pos_sp_triplet.previous,
+					     _pos_sp_triplet.current, _pos_sp_triplet.next)) {
+				_att_sp.timestamp = hrt_absolute_time();
+
+				// add attitude setpoint offsets
+				_att_sp.roll_body += _parameters.rollsp_offset_rad;
+				_att_sp.pitch_body += _parameters.pitchsp_offset_rad;
+
+				if (_control_mode.flag_control_manual_enabled) {
+					_att_sp.roll_body = constrain(_att_sp.roll_body, -_parameters.man_roll_max_rad, _parameters.man_roll_max_rad);
+					_att_sp.pitch_body = constrain(_att_sp.pitch_body, -_parameters.man_pitch_max_rad, _parameters.man_pitch_max_rad);
+				}
+>>>>>>> moved the terrain altitude offset to be published in pos ctrl status and handled by the navigator
 
 			if (_control_mode.flag_control_offboard_enabled ||
 			    _control_mode.flag_control_position_enabled ||
@@ -1819,7 +1864,7 @@ FixedwingPositionControl::reset_landing_state()
 	if (_time_started_landing > 0) {
 		// reset terrain estimation relevant values
 		_time_last_t_alt = 0;
-		_land_terrain_alt_offset = _land_terrain_alt_offset_temporary;
+		_land_terrain_alt_offset_prev = _land_terrain_alt_offset;
 		_land_touchdown_point_shift = 0.0f;
 		_land_rngfnd_bump_handled = false;
 
