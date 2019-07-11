@@ -261,6 +261,12 @@ public:
 	 */
 	float 		get_yaw_acceptance(float mission_item_yaw);
 
+	/**
+	 * Get the terrain altitude offset to make altitude setpoints relative to the terrain altitude.
+	 *
+         * @return terrain altitude offset
+	 */
+	float get_terrain_alt_offset();
 
 	orb_advert_t	*get_mavlink_log_pub() { return &_mavlink_log_pub; }
 

@@ -943,6 +943,13 @@ Navigator::get_yaw_acceptance(float mission_item_yaw)
 	return yaw;
 }
 
+float
+Navigator::get_terrain_alt_offset()
+{
+	const position_controller_status_s &pos_ctrl_status = _position_controller_status_sub.get();
+	return pos_ctrl_status.terrain_alt_offset;
+}
+
 void
 Navigator::load_fence_from_file(const char *filename)
 {
