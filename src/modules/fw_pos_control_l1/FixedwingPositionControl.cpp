@@ -313,9 +313,8 @@ FixedwingPositionControl::calculate_roll_limit()
 	 *  Vsacc = Vs * sqrt(n)
 	 */
 	if (_airspeed_valid) {
-
-                float as_ratio = _airspeed_min_adj / constrain(_airspeed, _param_fw_airspd_max.get(),
-                                 _airspeed_min_adj * 1.05f);
+                float as_ratio = _airspeed_min_adj / constrain(_airspeed,
+                                 _airspeed_min_adj * 1.05f, _param_fw_airspd_max.get());
                 float roll_limit_adj_rad = min(acosf(as_ratio * as_ratio), radians(_param_fw_r_lim.get()));
 
 		_l1_control.set_l1_roll_limit(roll_limit_adj_rad);
