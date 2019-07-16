@@ -249,7 +249,7 @@ float
 FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand, const Vector2f &ground_speed)
 {
 	/*
-	 * Calculate accelerated stall airspeed factor from commanded bank angle and use it to increase minimum airspeed.
+	 * Calculate accelerated stall airspeed factor from actual bank angle and use it to increase minimum airspeed.
 	 *
 	 *  We don't know the stall speed of the aircraft, but assuming user defined
 	 *  minimum airspeed (FW_AIRSPD_MIN) is slightly larger than stall speed
@@ -266,7 +266,6 @@ FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand, const
 	float adjusted_min_airspeed = _param_fw_airspd_min.get();
 
 	if (_airspeed_valid && PX4_ISFINITE(_att_sp.roll_body)) {
-
 		adjusted_min_airspeed = constrain(_param_fw_airspd_min.get() / sqrtf(cosf(_att_sp.roll_body)),
 						  _param_fw_airspd_min.get(), _param_fw_airspd_max.get());
 	}
@@ -293,6 +292,35 @@ FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand, const
 	// add minimum ground speed undershoot (only non-zero in presence of sufficient wind)
 	// sanity check: limit to range
 	return constrain(airspeed_demand, adjusted_min_airspeed, _param_fw_airspd_max.get());
+}
+
+void
+FixedwingPositionControl::calculate_roll_limit()
+{
+	/*
+	 * Calculate the maximum roll limit at the current airspeed.
+	 *
+	 *  The aircraft's stall speed increases in turns as the load factor incrases.
+	 *  We don't know the stall speed of the aircraft, but assuming user defined
+	 *  minimum airspeed (FW_AIRSPD_MIN) is slightly larger than stall speed
+	 *  this is close enough.
+	 *
+	 * increase lift vector to balance additional weight in bank
+	 *  cos(bank angle) = W/L = 1/n
+	 *   n is the load factor
+	 *
+	 * lift is proportional to airspeed^2 so the increase in stall speed is
+	 *  Vsacc = Vs * sqrt(n)
+	 */
+	if (_airspeed_valid) {
+
+                float as_ratio = _airspeed_min_adj / constrain(_airspeed, _param_fw_airspd_max.get(),
+                                 _airspeed_min_adj * 1.05f);
+		float roll_limit_adj_rad = min(acosf(as_ratio * as_ratio), _parameters.roll_limit);
+
+		_l1_control.set_l1_roll_limit(roll_limit_adj_rad);
+	}
+
 }
 
 void
@@ -559,6 +587,8 @@ FixedwingPositionControl::control_position(const Vector2f &curr_pos, const Vecto
 
 	_att_sp.fw_control_yaw = false;		// by default we don't want yaw to be contoller directly with rudder
 	_att_sp.apply_flaps = vehicle_attitude_setpoint_s::FLAPS_OFF;		// by default we don't use flaps
+
+	calculate_roll_limit();
 
 	Vector2f nav_speed_2d{ground_speed};
 

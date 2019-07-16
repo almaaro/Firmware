@@ -336,7 +336,10 @@ private:
 	float		get_tecs_thrust();
 
 	float		get_demanded_airspeed();
+
 	float		calculate_target_airspeed(float airspeed_demand, const Vector2f &ground_speed);
+
+	void		calculate_roll_limit();
 
 	/**
 	 * Handle incoming vehicle commands
