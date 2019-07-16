@@ -266,7 +266,8 @@ FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand, const
 	float adjusted_min_airspeed = _param_fw_airspd_min.get();
 
 	if (_airspeed_valid && PX4_ISFINITE(_att_sp.roll_body)) {
-		adjusted_min_airspeed = constrain(_param_fw_airspd_min.get() / sqrtf(cosf(_att_sp.roll_body)),
+                adjusted_min_airspeed = constrain(_param_fw_airspd_min.get() / sqrtf(cosf(constrain(_att_sp.roll_body, -0.95f * M_PI_2_F,
+                                                                                                    0.95f * M_PI_2_F))),
 						  _param_fw_airspd_min.get(), _param_fw_airspd_max.get());
 	}
 
