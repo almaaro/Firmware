@@ -336,7 +336,7 @@ FixedwingPositionControl::calculate_roll_limit()
 
                 float as_ratio = _airspeed_min_adj / constrain(_airspeed, _param_fw_airspd_max.get(),
                                  _airspeed_min_adj * 1.05f);
-		float roll_limit_adj_rad = min(acosf(as_ratio * as_ratio), _parameters.roll_limit);
+                float roll_limit_adj_rad = min(acosf(as_ratio * as_ratio), radians(_param_fw_r_lim.get()));
 
 		_l1_control.set_l1_roll_limit(roll_limit_adj_rad);
 	}
