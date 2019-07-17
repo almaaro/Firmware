@@ -277,7 +277,6 @@ FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand, const
 	 *
 	 * lift is proportional to airspeed^2 so the increase in stall speed is
 	 *  Vsacc = Vs * sqrt(n)
-	 *
 	 */
         float adjusted_min_airspeed = _airspeed_min_adj;
 
@@ -1919,6 +1918,10 @@ FixedwingPositionControl::tecs_update_pitch_throttle(float alt_sp, float airspee
 				    climbout_mode, climbout_pitch_min_rad,
 				    throttle_min, throttle_max, throttle_cruise,
 				    pitch_min_rad, pitch_max_rad);
+
+	//This might have been changed
+	_tecs.set_indicated_airspeed_min(_parameters.airspeed_min);
+
 
 	tecs_status_publish();
 	motor_airstream_publish();
