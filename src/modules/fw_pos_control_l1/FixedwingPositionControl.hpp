@@ -269,6 +269,7 @@ private:
 		FW_POSCTRL_MODE_OTHER
 	} _control_mode_current{FW_POSCTRL_MODE_OTHER};		///< used to check the mode in the last control loop iteration. Use to check if the last iteration was in the same mode.
 
+<<<<<<< HEAD
 	param_t _param_handle_airspeed_trans{PARAM_INVALID};
 	float _param_airspeed_trans{NAN};
 
