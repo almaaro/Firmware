@@ -261,14 +261,15 @@ FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand, const
 	 *
 	 * lift is proportional to airspeed^2 so the increase in stall speed is
 	 *  Vsacc = Vs * sqrt(n)
-	 *
 	 */
 	float adjusted_min_airspeed = _param_fw_airspd_min.get();
 
 	if (_airspeed_valid && PX4_ISFINITE(_att_sp.roll_body)) {
-                adjusted_min_airspeed = constrain(_param_fw_airspd_min.get() / sqrtf(cosf(constrain(_att_sp.roll_body, -0.95f * M_PI_2_F,
+                adjusted_min_airspeed = constrain(_airspeed_min_adj / sqrtf(cosf(constrain(_att_sp.roll_body, -0.95f * M_PI_2_F,
                                                                                                     0.95f * M_PI_2_F))),
-						  _param_fw_airspd_min.get(), _param_fw_airspd_max.get());
+                                                  _airspeed_min_adj, _param_fw_airspd_max.get());
+
+                _tecs.set_indicated_airspeed_min(adjusted_min_airspeed);
 	}
 
 	// groundspeed undershoot
@@ -1804,6 +1805,10 @@ FixedwingPositionControl::tecs_update_pitch_throttle(float alt_sp, float airspee
 				    climbout_mode, climbout_pitch_min_rad,
 				    throttle_min, throttle_max, throttle_cruise,
 				    pitch_min_rad, pitch_max_rad);
+
+	//This might have been changed
+	_tecs.set_indicated_airspeed_min(_parameters.airspeed_min);
+
 
 	tecs_status_publish();
 }
