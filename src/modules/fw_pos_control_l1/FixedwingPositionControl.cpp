@@ -313,11 +313,12 @@ FixedwingPositionControl::calculate_roll_limit()
 	 *
 	 * lift is proportional to airspeed^2 so the increase in stall speed is
 	 *  Vsacc = Vs * sqrt(n)
+	 *
 	 */
 	if (_airspeed_valid) {
                 float as_ratio = _airspeed_min_adj / constrain(_airspeed,
                                  _airspeed_min_adj * 1.05f, _param_fw_airspd_max.get());
-                float roll_limit_adj_rad = min(acosf(as_ratio * as_ratio), radians(_param_fw_r_lim.get()));
+                float roll_limit_adj_rad = constrain(acosf(as_ratio * as_ratio), radians(10.0f), radians(_param_fw_r_lim.get()));
 
 		_l1_control.set_l1_roll_limit(roll_limit_adj_rad);
 	}
