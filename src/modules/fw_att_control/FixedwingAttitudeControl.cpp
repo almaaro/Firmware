@@ -238,7 +238,7 @@ void
 FixedwingAttitudeControl::vehicle_motor_airstream_poll()
 {
 	if (_vehicle_motor_airstream_sub.update(&_vehicle_motor_airstream)) {
-		if (hrt_elapsed_time(&_vehicle_motor_airstream_sub.get().timestamp) < 1_s
+		if (hrt_elapsed_time(&_vehicle_motor_airstream.timestamp) < 1_s
 		    && _vehicle_motor_airstream.delta_v_trim_as_level > 0.0f) {
                         _pitch_trim_moment_vmin = _param_fw_dtrim_p_vmin * _vehicle_motor_airstream.delta_v_min_as_level *
 						  _vehicle_motor_airstream.delta_v_min_as_level;
