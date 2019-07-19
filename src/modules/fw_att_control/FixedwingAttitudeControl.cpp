@@ -255,7 +255,7 @@ FixedwingAttitudeControl::vehicle_motor_airstream_poll()
 	}
 }
 
-float FixedwingAttitudeControl::get_airspeed_and_update_scaling(const float dt)
+float FixedwingAttitudeControl::get_airspeed_and_update_scaling()
 {
 	_airspeed_validated_sub.update();
 	const bool airspeed_valid = PX4_ISFINITE(_airspeed_validated_sub.get().equivalent_airspeed_m_s)
@@ -596,8 +596,11 @@ void FixedwingAttitudeControl::Run()
                                                 _roll_ctrl.reset_integrator();
                                         }
 
-                                        float pitch_u = _pitch_ctrl.control_euler_rate(control_input);
+                                        // The elevator has a different scaler
+                                        control_input.scaler = _airspeed_scaling_elevator;
+                                        float pitch_u = _pitch_ctrl.control_bodyrate(control_input);
                                         _actuators.control[actuator_controls_s::INDEX_PITCH] = (PX4_ISFINITE(pitch_u)) ? pitch_u + trim_pitch : trim_pitch;
+                                        control_input.scaler = _airspeed_scaling;
 
                                         if (!PX4_ISFINITE(pitch_u)) {
                                                 _pitch_ctrl.reset_integrator();
@@ -644,6 +647,7 @@ void FixedwingAttitudeControl::Run()
 
                                                 _actuators.control[actuator_controls_s::INDEX_THROTTLE] *= _battery_scale;
                                         }
+
 				}
 
 				/*
@@ -671,7 +675,7 @@ void FixedwingAttitudeControl::Run()
 				float yaw_u = _yaw_ctrl.control_bodyrate(control_input);
 				_actuators.control[actuator_controls_s::INDEX_YAW] = (PX4_ISFINITE(yaw_u)) ? yaw_u + trim_yaw : trim_yaw;
 
-                                // The elevtor has a different scaler
+                                // The elevator has a different scaler
                                 control_input.scaler = _airspeed_scaling_elevator;
                                 float pitch_u = _pitch_ctrl.control_bodyrate(control_input);
                                 _actuators.control[actuator_controls_s::INDEX_PITCH] = (PX4_ISFINITE(pitch_u)) ? pitch_u + trim_pitch : trim_pitch;

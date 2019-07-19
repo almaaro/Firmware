@@ -234,5 +234,5 @@ private:
 	void		vehicle_land_detected_poll();
 	void		vehicle_motor_airstream_poll();
 
-	float 		get_airspeed_and_update_scaling(const float dt);
+        float 		get_airspeed_and_update_scaling();
 };
