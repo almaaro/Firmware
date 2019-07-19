@@ -775,7 +775,7 @@ PARAM_DEFINE_FLOAT(FW_DTRIM_P_FLPS, 0.0f);
  * is not hitting the elevator at all
  *
  * @group FW Attitude Control
- * @unit %
+ * @unit norm
  * @min 0
  * @max 1
  * @decimal 2
