@@ -87,6 +87,7 @@
 #include <uORB/topics/vehicle_land_detected.h>
 #include <uORB/topics/vehicle_local_position.h>
 #include <uORB/topics/vehicle_status.h>
+#include <uORB/topics/vehicle_motor_airstream.h>
 #include <uORB/uORB.h>
 #include <vtol_att_control/vtol_type.h>
 
