@@ -391,19 +391,19 @@ FixedwingPositionControl::landing_status_publish()
 void
 FixedwingPositionControl::motor_airstream_publish()
 {
-	vehicle_motor_airstream_s thr_as = {};
+	vehicle_motor_airstream_s motor_airstream = {};
 
-	thr_as.required_delta_v = _tecs.get_required_delta_v();
-	thr_as.delta_v_min_as_level = _tecs.get_delta_v_min_as_level();
-	thr_as.delta_v_trim_as_level = _tecs.get_delta_v_trim_as_level();
-	thr_as.delta_v_max_as_level = _tecs.get_delta_v_max_as_level();
-	thr_as.timestamp = hrt_absolute_time();
+	motor_airstream.required_delta_v = _tecs.get_required_delta_v();
+	motor_airstream.delta_v_min_as_level = _tecs.get_delta_v_min_as_level();
+	motor_airstream.delta_v_trim_as_level = _tecs.get_delta_v_trim_as_level();
+	motor_airstream.delta_v_max_as_level = _tecs.get_delta_v_max_as_level();
+	motor_airstream.timestamp = hrt_absolute_time();
 
-	if (_vehicle_thr_as_pub != nullptr) {
-		orb_publish(ORB_ID(vehicle_motor_airstream), _vehicle_thr_as_pub, &t);
+	if (_vehicle_motor_airstream_pub != nullptr) {
+		orb_publish(ORB_ID(vehicle_motor_airstream), _vehicle_motor_airstream_pub, &motor_airstream);
 
 	} else {
-		_vehicle_thr_as_pub = orb_advertise(ORB_ID(vehicle_motor_airstream), &t);
+		_vehicle_motor_airstream_pub = orb_advertise(ORB_ID(vehicle_motor_airstream), &motor_airstream);
 	}
 }
 
