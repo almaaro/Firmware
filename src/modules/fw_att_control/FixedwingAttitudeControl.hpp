@@ -105,6 +105,7 @@ private:
 	uORB::Subscription _vehicle_land_detected_sub{ORB_ID(vehicle_land_detected)};	/**< vehicle land detected subscription */
 	uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};			/**< vehicle status subscription */
 	uORB::Subscription _vehicle_rates_sub{ORB_ID(vehicle_angular_velocity)};
+	uORB::Subscription _vehicle_motor_airstream_sub{ORB_ID(vehicle_motor_airstream)};
 
 	uORB::SubscriptionData<airspeed_validated_s> _airspeed_validated_sub{ORB_ID(airspeed_validated)};
 
@@ -121,6 +122,7 @@ private:
 	vehicle_local_position_s		_local_pos {};		/**< local position */
 	vehicle_rates_setpoint_s		_rates_sp {};		/* attitude rates setpoint */
 	vehicle_status_s			_vehicle_status {};	/**< vehicle status */
+	vehicle_motor_airstream_s			_vehicle_motor_airstream{};
 
 	perf_counter_t	_loop_perf;			/**< loop performance counter */
 
@@ -128,6 +130,7 @@ private:
 	float _flaperons_applied{0.0f};
 
 	float _airspeed_scaling{1.0f};
+	float _airspeed_scaling_elevator{1.0f};
 
 	bool _landed{true};
 
@@ -206,7 +209,9 @@ private:
 
 		(ParamFloat<px4::params::TRIM_PITCH>) _param_trim_pitch,
 		(ParamFloat<px4::params::TRIM_ROLL>) _param_trim_roll,
-		(ParamFloat<px4::params::TRIM_YAW>) _param_trim_yaw
+                (ParamFloat<px4::params::TRIM_YAW>) _param_trim_yaw,
+
+                (ParamFloat<px4::params::FW_THR_AS_ELEV) _param_fw_thr_as_elev
 	)
 
 	ECL_RollController		_roll_ctrl;
@@ -226,6 +231,7 @@ private:
 	void		vehicle_attitude_setpoint_poll();
 	void		vehicle_rates_setpoint_poll();
 	void		vehicle_land_detected_poll();
+	void		vehicle_motor_airstream_poll();
 
-	float 		get_airspeed_and_update_scaling();
+	float 		get_airspeed_and_update_scaling(const float dt);
 };

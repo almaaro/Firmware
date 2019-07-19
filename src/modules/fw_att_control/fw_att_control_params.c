@@ -765,3 +765,20 @@ PARAM_DEFINE_FLOAT(FW_DTRIM_R_FLPS, 0.0f);
  * @increment 0.01
  */
 PARAM_DEFINE_FLOAT(FW_DTRIM_P_FLPS, 0.0f);
+
+/**
+ * Scaling factor for the motor airstream velocity at elevator
+ *
+ * How much the airstream from the motor effects the elevator trim.
+ * If set to 100%, the airspeed at the elevator is assumed equal to the
+ * airspeed right behind the motor. If 0%, the air stream from the motor
+ * is not hitting the elevator at all
+ *
+ * @group FW Attitude Control
+ * @unit %
+ * @min 0
+ * @max 1
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_THR_AS_ELEV, 0.0f);
