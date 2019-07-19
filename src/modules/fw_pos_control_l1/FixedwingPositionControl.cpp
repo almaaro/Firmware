@@ -385,6 +385,25 @@ FixedwingPositionControl::landing_status_publish()
 }
 
 void
+FixedwingPositionControl::motor_airstream_publish()
+{
+	vehicle_motor_airstream_s thr_as = {};
+
+	thr_as.required_delta_v = tecs.get_required_delta_v();
+	thr_as.delta_v_min_as_level = tecs.get_delta_v_min_as_level();
+	thr_as.delta_v_trim_as_level = tecs.get_delta_v_trim_as_level();
+	thr_as.delta_v_max_as_level = tecs.get_delta_v_max_as_level();
+	thr_as.timestamp = hrt_absolute_time();
+
+	if (_vehicle_thr_as_pub != nullptr) {
+		orb_publish(ORB_ID(vehicle_motor_airstream), _vehicle_thr_as_pub, &t);
+
+	} else {
+		_vehicle_thr_as_pub = orb_advertise(ORB_ID(vehicle_motor_airstream), &t);
+	}
+}
+
+void
 FixedwingPositionControl::abort_landing(bool abort)
 {
 	// only announce changes
@@ -1776,6 +1795,7 @@ FixedwingPositionControl::tecs_update_pitch_throttle(float alt_sp, float airspee
 				    pitch_min_rad, pitch_max_rad);
 
 	tecs_status_publish();
+	motor_airstream_publish();
 }
 
 int FixedwingPositionControl::task_spawn(int argc, char *argv[])
