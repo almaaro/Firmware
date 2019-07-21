@@ -1825,13 +1825,13 @@ FixedwingPositionControl::reset_landing_state()
 		_land_motor_lim = false;
 		_land_onslope = false;
 
-		// reset abort land, unless loitering after an abort
-		if (_land_abort && (_pos_sp_triplet.current.type != position_setpoint_s::SETPOINT_TYPE_LOITER)) {
-
-			abort_landing(false);
-		}
-
 		_time_started_landing = 0;
+	}
+
+	// reset abort land, unless loitering after an abort
+	if (_land_abort && (_pos_sp_triplet.current.type != position_setpoint_s::SETPOINT_TYPE_LOITER)) {
+
+		abort_landing(false);
 	}
 }
 
