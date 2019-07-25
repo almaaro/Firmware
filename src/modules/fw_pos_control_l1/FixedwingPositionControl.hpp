@@ -244,6 +244,7 @@ private:
 	hrt_abstime _airspeed_last_valid{0};			///< last time airspeed was received. Used to detect timeouts.
 	float _airspeed{0.0f};
 	float _eas2tas{1.0f};
+	float _airspeed_min_adj{10.0f};
 
 	float _groundspeed_undershoot{0.0f};			///< ground speed error to min. speed in m/s
 

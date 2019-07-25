@@ -530,6 +530,20 @@ PARAM_DEFINE_FLOAT(FW_FLAPS_TO_SCL, 0.0f);
 PARAM_DEFINE_FLOAT(FW_FLAPS_LND_SCL, 1.0f);
 
 /**
+ * Flap rate
+ *
+ * The time it takes for full flap travel
+ *
+ * @unit s
+ * @min 1.0
+ * @max 5.0
+ * @decimal 2
+ * @increment 0.01
+ * @group FW Attitude Control
+ */
+PARAM_DEFINE_FLOAT(FW_FLAPS_RATE, 1.0f);
+
+/**
  * Scale factor for flaperons
  *
  * @unit norm

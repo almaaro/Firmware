@@ -290,6 +290,10 @@ float FixedwingAttitudeControl::get_airspeed_and_update_scaling()
 		}
 	}
 
+	// Adjust the minimum airspeed to the flap setting
+	_airspeed_min_adj = _flaps_applied * _parameters.airspeed_min_flaps + (1.0f - _flaps_applied) *
+			    _parameters.airspeed_min;
+
 	/*
 	 * For scaling our actuators using anything less than the min (close to stall)
 	 * speed doesn't make any sense - its the strongest reasonable deflection we
@@ -297,7 +301,7 @@ float FixedwingAttitudeControl::get_airspeed_and_update_scaling()
 	 *
 	 * Forcing the scaling to this value allows reasonable handheld tests.
 	 */
-	float airspeed_constrained = constrain(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_max.get());
+	float airspeed_constrained = constrain(airspeed, _airspeed_min_adj, _param_fw_airspd_max.get());
 
 	_airspeed_scaling = (_param_fw_arsp_scale_en.get()) ? (_param_fw_airspd_trim.get() / airspeed_constrained) : 1.0f;
 
@@ -476,7 +480,7 @@ void FixedwingAttitudeControl::Run()
 			control_input.roll_setpoint = _att_sp.roll_body;
 			control_input.pitch_setpoint = _att_sp.pitch_body;
 			control_input.yaw_setpoint = _att_sp.yaw_body;
-			control_input.airspeed_min = _param_fw_airspd_min.get();
+                        control_input.airspeed_min = _airspeed_min_adj;
 			control_input.airspeed_max = _param_fw_airspd_max.get();
 			control_input.airspeed = airspeed;
 			control_input.scaler = _airspeed_scaling;
@@ -753,9 +757,11 @@ void FixedwingAttitudeControl::control_flaps(const float dt)
 		}
 	}
 
-	// move the actual control value continuous with time, full flap travel in 1sec
+	float flaps_dt = dt / _parameters.flaps_rate;
+
+	// move the actual control value continuous with time, full flap travel in
 	if (fabsf(_flaps_applied - flap_control) > 0.01f) {
-		_flaps_applied += (_flaps_applied - flap_control) < 0 ? dt : -dt;
+		_flaps_applied += (_flaps_applied - flap_control) < 0 ? flaps_dt : -flaps_dt;
 
 	} else {
 		_flaps_applied = flap_control;
@@ -783,7 +789,7 @@ void FixedwingAttitudeControl::control_flaps(const float dt)
 
 	// move the actual control value continuous with time, full flap travel in 1sec
 	if (fabsf(_flaperons_applied - flaperon_control) > 0.01f) {
-		_flaperons_applied += (_flaperons_applied - flaperon_control) < 0 ? dt : -dt;
+		_flaperons_applied += (_flaperons_applied - flaperon_control) < 0 ? flaps_dt : -flaps_dt;
 
 	} else {
 		_flaperons_applied = flaperon_control;
