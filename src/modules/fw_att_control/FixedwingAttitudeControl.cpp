@@ -240,12 +240,26 @@ FixedwingAttitudeControl::vehicle_motor_airstream_poll()
 	if (_vehicle_motor_airstream_sub.update(&_vehicle_motor_airstream)) {
 		if (hrt_elapsed_time(&_vehicle_motor_airstream.timestamp) < 1_s
 		    && _vehicle_motor_airstream.delta_v_trim_as_level > 0.0f) {
-                        _pitch_trim_moment_vmin = _param_fw_dtrim_p_vmin * _vehicle_motor_airstream.delta_v_min_as_level *
-						  _vehicle_motor_airstream.delta_v_min_as_level;
-                        _pitch_trim_moment = _param_trim_pitch * _vehicle_motor_airstream.delta_v_trim_as_level *
-					     _vehicle_motor_airstream.delta_v_trim_as_level;
-                        _pitch_trim_moment_vmax = _param_fw_dtrim_r_vmax.get() * _vehicle_motor_airstream.delta_v_max_as_level *
-						  _vehicle_motor_airstream.delta_v_max_as_level;
+
+			_pitch_trim_moment_vtrim = _parameters.trim_pitch * _vehicle_motor_airstream.delta_v_trim_as_level *
+						   _vehicle_motor_airstream.delta_v_trim_as_level;
+
+			_pitch_trim_moment_slope_low = (_pitch_trim_moment_vtrim - _parameters.dtrim_pitch_vmin *
+							_vehicle_motor_airstream.delta_v_min_as_level *
+							_vehicle_motor_airstream.delta_v_min_as_level) / (_parameters.airspeed_trim - _parameters.airspeed_min);
+
+			if (!PX4_ISFINITE(_pitch_trim_moment_slope_low)) {
+				_pitch_trim_moment_slope_low = 0;
+			}
+
+			_pitch_trim_moment_slope_high = (_pitch_trim_moment_vtrim - _parameters.dtrim_pitch_vmax *
+							 _vehicle_motor_airstream.delta_v_max_as_level *
+							 _vehicle_motor_airstream.delta_v_max_as_level) / (_parameters.airspeed_trim - _parameters.airspeed_max);
+
+			if (!PX4_ISFINITE(_pitch_trim_moment_slope_high)) {
+				_pitch_trim_moment_slope_high = 0;
+			}
+
 			_motor_airstream_valid = true;
 
 		} else {
@@ -503,6 +517,7 @@ void FixedwingAttitudeControl::Run()
 					_pitch_ctrl.set_max_rate_pos(radians(_param_fw_acro_y_max.get()));
 					_pitch_ctrl.set_max_rate_neg(radians(_param_fw_acro_y_max.get()));
 					_yaw_ctrl.set_max_rate(radians(_param_fw_acro_z_max.get()));
+
 				}
 			}
 
@@ -534,8 +549,7 @@ void FixedwingAttitudeControl::Run()
                         if (airspeed < _param_fw_airspd_trim.get()) {
                                 trim_roll += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(), _param_fw_dtrim_r_vmin.get(),
                                                            0.0f);
-                                req_pitch_moment += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(),
-                                                                  _pitch_trim_moment_vmin, 0.0f);
+                                req_pitch_moment += (airspeed - _param_fw_airspd_trim) * _pitch_trim_moment_slope_low;
                                 trim_pitch += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(), _param_fw_dtrim_p_vmin.get(),
                                                             0.0f);
                                 trim_yaw += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(), _param_fw_dtrim_y_vmin.get(),
@@ -544,8 +558,7 @@ void FixedwingAttitudeControl::Run()
                         } else {
                                 trim_roll += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
                                                            _param_fw_dtrim_r_vmax.get());
-                                req_pitch_moment += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
-                                                                  _pitch_trim_moment_vmax);
+                                req_pitch_moment += (airspeed - _param_fw_airspd_trim) * _pitch_trim_moment_slope_high;
                                 trim_pitch += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
                                                             _param_fw_dtrim_p_vmax.get());
                                 trim_yaw += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
@@ -659,8 +672,6 @@ void FixedwingAttitudeControl::Run()
 				_rates_sp.yaw = _yaw_ctrl.get_desired_bodyrate();
 
 				_rates_sp.timestamp = hrt_absolute_time();
-
-                                _rate_sp_pub.publish(_rates_sp);
 
 			} else {
 				vehicle_rates_setpoint_poll();
