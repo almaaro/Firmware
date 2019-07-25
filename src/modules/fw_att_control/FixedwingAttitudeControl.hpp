@@ -129,6 +129,8 @@ private:
 
 	float _airspeed_scaling{1.0f};
 
+	float _airspeed_min_adj{10.0f};
+
 	bool _landed{true};
 
 	float _battery_scale{1.0f};
@@ -144,6 +146,7 @@ private:
 
 		(ParamFloat<px4::params::FW_AIRSPD_MAX>) _param_fw_airspd_max,
 		(ParamFloat<px4::params::FW_AIRSPD_MIN>) _param_fw_airspd_min,
+                (ParamFloat<px4::params::FW_AS_MIN_FLPS>) _param_fw_airspd_min_flps,
 		(ParamFloat<px4::params::FW_AIRSPD_TRIM>) _param_fw_airspd_trim,
 		(ParamInt<px4::params::FW_ARSP_MODE>) _param_fw_arsp_mode,
 

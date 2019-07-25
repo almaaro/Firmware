@@ -248,6 +248,10 @@ FixedwingPositionControl::get_demanded_airspeed()
 float
 FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand, const Vector2f &ground_speed)
 {
+	// Adjust the minimum airspeed to the flap setting
+	_airspeed_min_adj = _flaps_applied * _parameters.airspeed_min_flaps + (1.0f - _flaps_applied) *
+			    _parameters.airspeed_min;
+
 	/*
 	 * Calculate accelerated stall airspeed factor from commanded bank angle and use it to increase minimum airspeed.
 	 *
@@ -263,12 +267,14 @@ FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand, const
 	 *  Vsacc = Vs * sqrt(n)
 	 *
 	 */
-	float adjusted_min_airspeed = _param_fw_airspd_min.get();
+        float adjusted_min_airspeed = _airspeed_min_adj;
 
 	if (_airspeed_valid && PX4_ISFINITE(_att_sp.roll_body)) {
 
-		adjusted_min_airspeed = constrain(_param_fw_airspd_min.get() / sqrtf(cosf(_att_sp.roll_body)),
-						  _param_fw_airspd_min.get(), _param_fw_airspd_max.get());
+                adjusted_min_airspeed = constrain(_airspeed_min_adj / sqrtf(cosf(_att_sp.roll_body)),
+                                                  _airspeed_min_adj, _param_fw_airspd_max.get());
+
+                _tecs.set_indicated_airspeed_min(adjusted_min_airspeed);
 	}
 
 	// groundspeed undershoot
@@ -723,7 +729,7 @@ FixedwingPositionControl::control_position(const Vector2f &curr_pos, const Vecto
 				// landing airspeed and potentially tighter throttle control) already such that we don't
 				// have to do this switch (which can cause significant altitude errors) close to the ground.
 				_tecs.set_time_const_throt(_param_fw_thrtc_sc.get() * _param_fw_t_thro_const.get());
-				mission_airspeed = _param_fw_lnd_airspd_sc.get() * _param_fw_airspd_min.get();
+                                mission_airspeed = _param_fw_lnd_airspd_sc.get() * _airspeed_min_adj;
 				_att_sp.apply_flaps = true;
 			}
 
@@ -1072,7 +1078,7 @@ FixedwingPositionControl::control_takeoff(const Vector2f &curr_pos, const Vector
 		const float takeoff_pitch_max_deg = _runway_takeoff.getMaxPitch(_param_fw_p_lim_max.get());
 
 		tecs_update_pitch_throttle(pos_sp_curr.alt,
-					   calculate_target_airspeed(_runway_takeoff.getMinAirspeedScaling() * _param_fw_airspd_min.get(), ground_speed),
+                                           calculate_target_airspeed(_runway_takeoff.getMinAirspeedScaling() * _airspeed_min_adj, ground_speed),
 					   radians(_param_fw_p_lim_min.get()),
 					   radians(takeoff_pitch_max_deg),
 					   _param_fw_thr_min.get(),
@@ -1369,8 +1375,8 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 			_land_stayonground = true;
 		}
 
-		const float airspeed_land = _param_fw_lnd_airspd_sc.get() * _param_fw_airspd_min.get();
-		const float throttle_land = _param_fw_thr_min.get() + (_param_fw_thr_max.get() - _param_fw_thr_min.get()) * 0.1f;
+		const float airspeed_land = _parameters.land_airspeed_scale * _airspeed_min_adj;
+		const float throttle_land = _parameters.throttle_min + (_parameters.throttle_max - _parameters.throttle_min) * 0.1f;
 
 		tecs_update_pitch_throttle(terrain_alt + flare_curve_alt_rel,
 					   calculate_target_airspeed(airspeed_land, ground_speed),
@@ -1438,7 +1444,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 			}
 		}
 
-		const float airspeed_approach = _param_fw_lnd_airspd_sc.get() * _param_fw_airspd_min.get();
+                const float airspeed_approach = _param_fw_lnd_airspd_sc.get() * _airspeed_min_adj;
 
 		tecs_update_pitch_throttle(altitude_desired,
 					   calculate_target_airspeed(airspeed_approach, ground_speed),
@@ -1687,7 +1693,7 @@ FixedwingPositionControl::tecs_update_pitch_throttle(float alt_sp, float airspee
 				_asp_after_transition = _airspeed;
 			}
 
-			_asp_after_transition = constrain(_asp_after_transition, _param_fw_airspd_min.get(), _param_fw_airspd_max.get());
+                        _asp_after_transition = constrain(_asp_after_transition, _airspeed_min_adj, _param_fw_airspd_max.get());
 
 		} else if (_was_in_transition) {
 			// after transition we ramp up desired airspeed from the speed we had coming out of the transition

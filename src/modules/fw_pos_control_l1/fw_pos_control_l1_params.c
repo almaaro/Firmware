@@ -433,6 +433,21 @@ PARAM_DEFINE_FLOAT(FW_LND_THRTC_SC, 1.0f);
 PARAM_DEFINE_FLOAT(FW_AIRSPD_MIN, 10.0f);
 
 /**
+ * Minimum Airspeed with flaps depolyed
+ *
+ * If the airspeed falls below this value, the TECS controller will try to
+ * increase airspeed more aggressively.
+ *
+ * @unit m/s
+ * @min 0.0
+ * @max 40
+ * @decimal 1
+ * @increment 0.5
+ * @group FW TECS
+ */
+PARAM_DEFINE_FLOAT(FW_AS_MIN_FLPS, 10.0f);
+
+/**
  * Maximum Airspeed
  *
  * If the airspeed is above this value, the TECS controller will try to decrease
