@@ -141,6 +141,13 @@ private:
 
 	bool _is_tailsitter{false};
 
+        //The charasteristic pitch trim moments at different airspeeds, used for pitch trim scaling.
+        float _pitch_trim_moment_slope_low{0.0f};
+        float _pitch_trim_moment_vtrim{0.0f};
+        float _pitch_trim_moment_slope_high{0.0f};
+
+        bool _motor_airstream_valid{false};
+
 	DEFINE_PARAMETERS(
 		(ParamFloat<px4::params::FW_ACRO_X_MAX>) _param_fw_acro_x_max,
 		(ParamFloat<px4::params::FW_ACRO_Y_MAX>) _param_fw_acro_y_max,
