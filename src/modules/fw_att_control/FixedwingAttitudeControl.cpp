@@ -244,19 +244,20 @@ FixedwingAttitudeControl::vehicle_motor_airstream_poll()
 			_pitch_trim_moment_vtrim = _parameters.trim_pitch * _vehicle_motor_airstream.delta_v_trim_as_level *
 						   _vehicle_motor_airstream.delta_v_trim_as_level;
 
-			_pitch_trim_moment_slope_low = (_pitch_trim_moment_vtrim - _parameters.dtrim_pitch_vmin *
-							_vehicle_motor_airstream.delta_v_min_as_level *
-							_vehicle_motor_airstream.delta_v_min_as_level) / (_parameters.airspeed_trim - _parameters.airspeed_min);
+			if (_parameters.airspeed_trim > _parameters.airspeed_min + 0.5f) {
+				_pitch_trim_moment_slope_low = (_pitch_trim_moment_vtrim - _parameters.dtrim_pitch_vmin *
+								_vehicle_motor_airstream.delta_v_min_as_level * _vehicle_motor_airstream.delta_v_min_as_level) /
+							       (_parameters.airspeed_trim - _parameters.airspeed_min);
 
-			if (!PX4_ISFINITE(_pitch_trim_moment_slope_low)) {
+			} else {
 				_pitch_trim_moment_slope_low = 0;
 			}
 
-			_pitch_trim_moment_slope_high = (_pitch_trim_moment_vtrim - _parameters.dtrim_pitch_vmax *
-							 _vehicle_motor_airstream.delta_v_max_as_level *
-							 _vehicle_motor_airstream.delta_v_max_as_level) / (_parameters.airspeed_trim - _parameters.airspeed_max);
+			if (_parameters.airspeed_trim < _parameters.airspeed_max - 0.5f) {
+				(_pitch_trim_moment_vtrim - _parameters.dtrim_pitch_vmax * _vehicle_motor_airstream.delta_v_max_as_level *
+				 _vehicle_motor_airstream.delta_v_max_as_level) / (_parameters.airspeed_trim - _parameters.airspeed_max);
 
-			if (!PX4_ISFINITE(_pitch_trim_moment_slope_high)) {
+			} else {
 				_pitch_trim_moment_slope_high = 0;
 			}
 
