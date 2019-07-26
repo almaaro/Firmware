@@ -63,6 +63,10 @@ Landingslope::calculateSlopeValues()
 	_flare_constant = (_H0 * _d1) / _flare_relative_alt;
 	_flare_length = -logf(_H1_virt / _H0) * _flare_constant;
 	_horizontal_slope_displacement = (_flare_length - _d1);
+
+	//...But since we are not using a predefined flare path (temporary fix)
+	_horizontal_slope_displacement = 0.0f;
+	_flare_length = _flare_relative_alt / tanf(_landing_slope_angle_rad);
 }
 
 float
