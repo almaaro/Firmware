@@ -261,8 +261,8 @@ float
 FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand, const Vector2f &ground_speed)
 {
 	// Adjust the minimum airspeed to the flap setting
-	_airspeed_min_adj = _flaps_applied * _parameters.airspeed_min_flaps + (1.0f - _flaps_applied) *
-			    _parameters.airspeed_min;
+        _airspeed_min_adj = _flaps_applied * _param_fw_airspd_min_flps.get() + (1.0f - _flaps_applied) *
+                            _param_fw_airspd_min.get();
 
 	/*
 	 * Calculate accelerated stall airspeed factor from commanded bank angle and use it to increase minimum airspeed.
