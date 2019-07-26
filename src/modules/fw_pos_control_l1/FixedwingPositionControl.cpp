@@ -249,8 +249,8 @@ float
 FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand, const Vector2f &ground_speed)
 {
 	// Adjust the minimum airspeed to the flap setting
-	_airspeed_min_adj = _flaps_applied * _parameters.airspeed_min_flaps + (1.0f - _flaps_applied) *
-			    _parameters.airspeed_min;
+        _airspeed_min_adj = _flaps_applied * _param_fw_airspd_min_flps.get() + (1.0f - _flaps_applied) *
+                            _param_fw_airspd_min.get();
 
 	/*
 	 * Calculate accelerated stall airspeed factor from commanded bank angle and use it to increase minimum airspeed.
@@ -1375,8 +1375,8 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 			_land_stayonground = true;
 		}
 
-		const float airspeed_land = _parameters.land_airspeed_scale * _airspeed_min_adj;
-		const float throttle_land = _parameters.throttle_min + (_parameters.throttle_max - _parameters.throttle_min) * 0.1f;
+                const float airspeed_land = _param_fw_lnd_airspd_sc.get() * _airspeed_min_adj;
+                const float throttle_land = _param_fw_thr_min.get() + (_param_fw_thr_max.get() - _param_fw_thr_min.get()) * 0.1f;
 
 		tecs_update_pitch_throttle(terrain_alt + flare_curve_alt_rel,
 					   calculate_target_airspeed(airspeed_land, ground_speed),
