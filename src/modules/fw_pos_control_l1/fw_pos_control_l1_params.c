@@ -455,19 +455,6 @@ PARAM_DEFINE_FLOAT(FW_LND_MAX_MV, 500.0f);
 PARAM_DEFINE_FLOAT(FW_LND_MV_ALT, 0.0f);
 
 /**
- * How many percent we can be above the glide slope altitude setpoint to not readjust the slope position.
- * Only applied when under FW_LND_MV_ALT and not flaring.
- *
- * @unit norm
- * @min 0.1
- * @max 1.0
- * @decimal 2
- * @increment 0.01
- * @group FW L1 Control
- */
-PARAM_DEFINE_FLOAT(FW_LND_GS_TOL, 0.1f);
-
-/**
  * The time for how long the terrain estimate can be without updating before aborting the landing during the
  * landing phase.
  *

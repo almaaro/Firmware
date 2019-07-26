@@ -43,6 +43,7 @@ FixedwingPositionControl::FixedwingPositionControl(bool vtol) :
 	_launchDetector(this),
 	_runway_takeoff(this)
 {
+<<<<<<< HEAD
 	if (vtol) {
 		_param_handle_airspeed_trans = param_find("VT_ARSP_TRANS");
 
@@ -1471,7 +1472,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 				// Move the land point forward so that we seem to be at the correct altitude
 				// if the altitude error would be over FW_LND_GS_TOL of the current slope altitude setpoint
 				// and the new altitude setpoint would be under FW_LND_MV_ALT
-                                if ((_current_altitude - terrain_alt) > landing_slope_alt_rel_desired * (1.0f + _param_fw_lnd_gs_tol) &&
+                                if ((_current_altitude - terrain_alt) > landing_slope_alt_rel_desired &&
                                     landing_slope_alt_rel_desired < _param_fw_lnd_mv_alt) {
 					_land_touchdown_point_shift = _landingslope.getLandingSlopeWPDistance(landing_slope_alt_rel_desired + pos_sp_curr.alt,
 								      terrain_alt,
