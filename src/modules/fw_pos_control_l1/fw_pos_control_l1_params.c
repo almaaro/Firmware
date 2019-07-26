@@ -284,7 +284,7 @@ PARAM_DEFINE_FLOAT(FW_LND_HVIRT, 10.0f);
  * Landing flare altitude (relative to landing altitude)
  *
  * @unit m
- * @min 0.0
+ * @min 0.5
  * @max 25.0
  * @decimal 1
  * @increment 0.5
@@ -441,8 +441,9 @@ PARAM_DEFINE_FLOAT(FW_LND_MAX_MV, 500.0f);
 /**
  * The maximum altitude under which the glide slope position will be readjusted.
  *
- * If the rangefinder gets a valid reading under this altitude causing the glide slope altitude
- * setpoint to change, the landing point will be moved further so that the setpoint will remain the same.
+ * If the rangefinder gets a valid reading causing the glide slope altitude
+ * setpoint to change to under this altitude, the landing point will be moved
+ * further so that the setpoint will remain the same.
  * Above this altitude the glide slope position will not be changed
  *
  * @unit m
