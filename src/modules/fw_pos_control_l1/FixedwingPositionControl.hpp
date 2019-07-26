@@ -387,7 +387,6 @@ private:
 		(ParamFloat<px4::params::FW_LND_TLALT>) _param_fw_lnd_tlalt,
                 (ParamFloat<px4::params::FW_LND_MAX_MV>) _param_fw_lnd_max_mv,
                 (ParamFloat<px4::params::FW_LND_MV_ALT>) _param_fw_lnd_mv_alt,
-                (ParamFloat<px4::params::FW_LND_GS_TOL>) _param_fw_lnd_gs_tol,
                 (ParamFloat<px4::params::FW_LND_TERR_TO>) _param_fw_lnd_terr_to,
                 (ParamFloat<px4::params::FW_LND_WAIT_TERR>) _param_fw_lnd_wait_terr,
 		(ParamBool<px4::params::FW_LND_EARLYCFG>) _param_fw_lnd_earlycfg,
