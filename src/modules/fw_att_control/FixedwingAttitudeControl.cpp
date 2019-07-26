@@ -254,8 +254,9 @@ FixedwingAttitudeControl::vehicle_motor_airstream_poll()
 			}
 
 			if (_parameters.airspeed_trim < _parameters.airspeed_max - 0.5f) {
-				(_pitch_trim_moment_vtrim - _parameters.dtrim_pitch_vmax * _vehicle_motor_airstream.delta_v_max_as_level *
-				 _vehicle_motor_airstream.delta_v_max_as_level) / (_parameters.airspeed_trim - _parameters.airspeed_max);
+				_pitch_trim_moment_slope_high = (_pitch_trim_moment_vtrim - _parameters.dtrim_pitch_vmax *
+								 _vehicle_motor_airstream.delta_v_max_as_level *
+								 _vehicle_motor_airstream.delta_v_max_as_level) / (_parameters.airspeed_trim - _parameters.airspeed_max);
 
 			} else {
 				_pitch_trim_moment_slope_high = 0;
