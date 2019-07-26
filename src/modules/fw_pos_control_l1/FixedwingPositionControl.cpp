@@ -1443,8 +1443,6 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 		 * until the intersection with slope
 		 * */
 
-landing_glideslope:
-
 		_land_noreturn_vertical  = false;
 
 		float altitude_desired = terrain_alt;
