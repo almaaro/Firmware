@@ -265,7 +265,7 @@ private:
 	TECS			_tecs;
 
 	//Flap setting
-	float _landing_flaps_applied{0.0f};
+	float _flaps_applied{0.0f};
 
 	enum FW_POSCTRL_MODE {
 		FW_POSCTRL_MODE_AUTO,
