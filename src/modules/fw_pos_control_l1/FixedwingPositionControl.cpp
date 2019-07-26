@@ -1418,6 +1418,8 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 
 landing_glideslope:
 
+		_land_noreturn_vertical  = false;
+
 		float altitude_desired = terrain_alt;
 
 		float landing_slope_alt_rel_desired = _landingslope.getLandingSlopeRelativeAltitude(
