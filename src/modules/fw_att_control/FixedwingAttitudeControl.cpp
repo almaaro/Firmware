@@ -160,7 +160,7 @@ FixedwingAttitudeControl::vehicle_manual_poll()
 					_att_sp.roll_body = constrain(_att_sp.roll_body,
 								      -radians(_param_fw_man_r_max.get()), radians(_param_fw_man_r_max.get()));
 
-					_att_sp.pitch_body = -_manual.x * radians(_param_fw_man_p_max.get()) + radians(_param_fw_psp_off.get());
+                                        _att_sp.pitch_body = -_manual.x * radians(_param_fw_man_p_max.get());
 					_att_sp.pitch_body = constrain(_att_sp.pitch_body,
 								       -radians(_param_fw_man_p_max.get()), radians(_param_fw_man_p_max.get()));
 
