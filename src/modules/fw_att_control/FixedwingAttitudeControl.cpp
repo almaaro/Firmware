@@ -238,16 +238,13 @@ void
 FixedwingAttitudeControl::vehicle_motor_airstream_poll()
 {
 	if (_vehicle_motor_airstream_sub.update(&_vehicle_motor_airstream)) {
-		if (hrt_elapsed_time(&_vehicle_motor_airstream.timestamp) < 1_s
-		    && _vehicle_motor_airstream.delta_v_trim_as_level > 0.0f) {
+		if (hrt_elapsed_time(&_vehicle_motor_airstream.timestamp) < 1_s) {
 
-			_pitch_trim_moment_vtrim = _parameters.trim_pitch * _vehicle_motor_airstream.delta_v_trim_as_level *
-						   _vehicle_motor_airstream.delta_v_trim_as_level;
+			_pitch_trim_moment_vtrim = _parameters.trim_pitch * _vehicle_motor_airstream.as_elev_trim_as_level_sq;
 
 			if (_parameters.airspeed_trim > _parameters.airspeed_min + 0.5f) {
 				_pitch_trim_moment_slope_low = (_pitch_trim_moment_vtrim - _parameters.dtrim_pitch_vmin *
-								_vehicle_motor_airstream.delta_v_min_as_level * _vehicle_motor_airstream.delta_v_min_as_level) /
-							       (_parameters.airspeed_trim - _parameters.airspeed_min);
+								_vehicle_motor_airstream.as_elev_min_as_level_sq) / (_parameters.airspeed_trim - _parameters.airspeed_min);
 
 			} else {
 				_pitch_trim_moment_slope_low = 0;
@@ -255,8 +252,7 @@ FixedwingAttitudeControl::vehicle_motor_airstream_poll()
 
 			if (_parameters.airspeed_trim < _parameters.airspeed_max - 0.5f) {
 				_pitch_trim_moment_slope_high = (_pitch_trim_moment_vtrim - _parameters.dtrim_pitch_vmax *
-								 _vehicle_motor_airstream.delta_v_max_as_level *
-								 _vehicle_motor_airstream.delta_v_max_as_level) / (_parameters.airspeed_trim - _parameters.airspeed_max);
+								 _vehicle_motor_airstream.as_elev_max_as_level_sq) / (_parameters.airspeed_trim - _parameters.airspeed_max);
 
 			} else {
 				_pitch_trim_moment_slope_high = 0;
@@ -569,14 +565,6 @@ void FixedwingAttitudeControl::Run()
 
                         if (_motor_airstream_valid) {
                                 float req_pitch_moment_scaled = req_pitch_moment / (airstream_velocity_elevator * airstream_velocity_elevator);
-
-                                // move the actual control value continuous with time, full travel in 0.5sec
-                                if (fabsf(_trim_pitch_prev - req_pitch_moment_scaled) > 0.01f) {
-                                        trim_pitch += (_trim_pitch_prev - req_pitch_moment_scaled) < 0 ? 2.0f * deltaT : -2.0f * deltaT;
-
-                                } else {
-                                        trim_pitch = req_pitch_moment_scaled;
-                                }
                         }
 
                         /* add trim increment if flaps are deployed  */
