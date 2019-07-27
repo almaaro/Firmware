@@ -301,15 +301,10 @@ float FixedwingAttitudeControl::get_airspeed_and_update_scaling()
 	_airspeed_scaling = (_param_fw_arsp_scale_en.get()) ? (_param_fw_airspd_trim.get() / airspeed_constrained) : 1.0f;
 
 	//The elevator needs a different scaler as the motor airstream may hit it.
-        airspeed_constrained = math::constrain(airspeed + _param_fw_thr_as_elev *
-                                               _vehicle_motor_airstream.required_delta_v, _param_fw_airspd_min.get(),
-                                               _param_fw_airspd_max.get() + _param_fw_thr_as_elev *
-					       _vehicle_motor_airstream.delta_v_max_as_level);
+        airspeed_constrained = math::max(_vehicle_motor_airstream.required_as_elev, _param_fw_airspd_min.get());
 
 	if (_motor_airstream_valid) {
-		// 1s lowpass filter
-                _airspeed_scaling_elevator = dt * ((_param_fw_airspd_trim.get() + _vehicle_motor_airstream.delta_v_trim_as_level) /
-						   airspeed_constrained) + (1.0f - dt) * _airspeed_scaling_elevator;
+		_airspeed_scaling_elevator = sqrtf(_vehicle_motor_airstream.as_elev_trim_as_level_sq) / airspeed_constrained;
 
 	} else {
 		_airspeed_scaling_elevator = _airspeed_scaling;
