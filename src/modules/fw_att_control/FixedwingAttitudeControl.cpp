@@ -56,8 +56,6 @@ FixedwingAttitudeControl::FixedwingAttitudeControl(bool vtol) :
 		}
 	}
 
-	_parameter_handles.motor_airstream_at_elevator_scaler = param_find("FW_THR_AS_ELEV");
-
 	/* fetch initial parameter values */
 	parameters_update();
 
@@ -238,7 +236,8 @@ void
 FixedwingAttitudeControl::vehicle_motor_airstream_poll()
 {
 	if (_vehicle_motor_airstream_sub.update(&_vehicle_motor_airstream)) {
-		if (hrt_elapsed_time(&_vehicle_motor_airstream.timestamp) < 1_s) {
+		if (hrt_elapsed_time(&_vehicle_motor_airstream.timestamp) < 1_s
+		    && _vehicle_motor_airstream.required_as_elev > 0.0f) {
 
 			_pitch_trim_moment_vtrim = _parameters.trim_pitch * _vehicle_motor_airstream.as_elev_trim_as_level_sq;
 

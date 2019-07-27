@@ -111,10 +111,11 @@ FixedwingPositionControl::parameters_update()
 	_tecs.set_heightrate_p(_param_fw_t_hrate_p.get());
 	_tecs.set_heightrate_ff(_param_fw_t_hrate_ff.get());
 	_tecs.set_speedrate_p(_param_fw_t_srate_p.get());
-        _tecs.set_wingspan(_param_fw_t_wingspan.get());
-        _tecs.set_auw(_param_fw_t_auw.get());
-        _tecs.set_propeller_diameter(_param_fw_t_prop_dia.get());
-        _tecs.set_use_advanced_thr_calculation(_param_fw_t_adv_thr.get());
+	_tecs.set_wingspan(_param_fw_t_wingspan.get());
+	_tecs.set_auw(_param_fw_t_auw.get());
+	_tecs.set_propeller_diameter(_param_fw_t_prop_dia.get());
+	_tecs.set_use_advanced_thr_calculation(_param_fw_t_adv_thr.get());
+	_tecs.set_motor_airstream_at_elevator_scaler(_param_fw_thr_as_elev.get());
 
 	// Landing slope
 	/* check if negative value for 2/3 of flare altitude is set for throttle cut */
