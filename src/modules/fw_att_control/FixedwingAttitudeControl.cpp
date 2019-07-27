@@ -509,7 +509,6 @@ void FixedwingAttitudeControl::Run()
 					_pitch_ctrl.set_max_rate_pos(radians(_param_fw_acro_y_max.get()));
 					_pitch_ctrl.set_max_rate_neg(radians(_param_fw_acro_y_max.get()));
 					_yaw_ctrl.set_max_rate(radians(_param_fw_acro_z_max.get()));
-
 				}
 			}
 
@@ -550,7 +549,7 @@ void FixedwingAttitudeControl::Run()
                         } else {
                                 trim_roll += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
                                                            _param_fw_dtrim_r_vmax.get());
-                                req_pitch_moment += (airspeed - _param_fw_airspd_trim) * _pitch_trim_moment_slope_high;
+                                req_pitch_moment += (airspeed - _param_fw_airspd_trim.get()) * _pitch_trim_moment_slope_high;
                                 trim_pitch += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
                                                             _param_fw_dtrim_p_vmax.get());
                                 trim_yaw += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
@@ -558,7 +557,7 @@ void FixedwingAttitudeControl::Run()
                         }
 
                         if (_motor_airstream_valid) {
-                                float req_pitch_moment_scaled = req_pitch_moment / (airstream_velocity_elevator * airstream_velocity_elevator);
+                                trim_pitch = req_pitch_moment / (airstream_velocity_elevator * airstream_velocity_elevator);
                         }
 
                         /* add trim increment if flaps are deployed  */
