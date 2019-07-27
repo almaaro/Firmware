@@ -410,7 +410,8 @@ private:
 		(ParamFloat<px4::params::FW_THR_LND_MAX>) _param_fw_thr_lnd_max,
 		(ParamFloat<px4::params::FW_THR_MAX>) _param_fw_thr_max,
 		(ParamFloat<px4::params::FW_THR_MIN>) _param_fw_thr_min,
-		(ParamFloat<px4::params::FW_THR_SLEW_MAX>) _param_fw_thr_slew_max,
+                (ParamFloat<px4::params::FW_THR_SLEW_MAX>) _param_fw_thr_slew_max,
+                (ParamFloat<px4::params::FW_THR_AS_ELEV>) _param_fw_thr_as_elev,
 
 		// external parameters
 		(ParamInt<px4::params::FW_ARSP_MODE>) _param_fw_arsp_mode,
