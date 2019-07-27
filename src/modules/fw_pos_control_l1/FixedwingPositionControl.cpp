@@ -389,10 +389,10 @@ FixedwingPositionControl::motor_airstream_publish()
 {
 	vehicle_motor_airstream_s motor_airstream = {};
 
-	motor_airstream.required_delta_v = _tecs.get_required_delta_v();
-	motor_airstream.delta_v_min_as_level = _tecs.get_delta_v_min_as_level();
-	motor_airstream.delta_v_trim_as_level = _tecs.get_delta_v_trim_as_level();
-	motor_airstream.delta_v_max_as_level = _tecs.get_delta_v_max_as_level();
+	motor_airstream.required_as_elev = _tecs.get_required_as_elev();
+	motor_airstream.as_elev_min_as_level_sq = _tecs.get_as_elev_min_as_level_sq();
+	motor_airstream.as_elev_trim_as_level_sq = _tecs.get_as_elev_trim_as_level_sq();
+	motor_airstream.as_elev_max_as_level_sq = _tecs.get_as_elev_max_as_level_sq();
 	motor_airstream.timestamp = hrt_absolute_time();
 
 	if (_vehicle_motor_airstream_pub != nullptr) {
