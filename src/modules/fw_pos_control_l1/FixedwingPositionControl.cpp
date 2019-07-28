@@ -1386,8 +1386,10 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 
                 const float airspeed_land = _param_fw_lnd_airspd_sc.get() * _param_fw_airspd_min.get();
 
+
                 // (Negative) height rate setpoint during flare. Same as the glideslope hgt rate at flare alt
-                float flare_hgt_rate = constrain(_current_altitude - terrain_alt  / _landingslope.flare_relative_alt(), 0.0f,
+		float gs_hgt_rate = _landingslope.landing_slope_angle_rad() * ground_speed.length();
+                float flare_hgt_rate = constrain((_current_altitude - terrain_alt) / _landingslope.flare_relative_alt(), 0.0f,
 						 gs_hgt_rate);
 
 		_tecs.set_pos_ctrl_hgt_rate(true, -flare_hgt_rate);
