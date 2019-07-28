@@ -1382,8 +1382,8 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 
         if ((_current_altitude < _landingslope.flare_relative_alt() + terrain_alt) &&
 	    (wp_distance < _landingslope.flare_length() - _land_touchdown_point_shift) &&
-            ((_param_fw_lnd_req_terr.get() && _time_last_t_alt > 0) || !_param_fw_lnd_req_terr.get()
-             || !_param_fw_lnd_useter.get())) {
+            ((_param_fw_lnd_req_terr.get() && _time_last_t_alt > 0 && _land_rngfnd_bump_handled)
+             || !_param_fw_lnd_req_terr.get() || !_param_fw_lnd_useter.get())) {
 
 		if (!_land_noreturn_vertical) {
 			_land_noreturn_vertical  = true;
