@@ -112,6 +112,26 @@ FixedwingAttitudeControl::parameters_update()
 	_wheel_ctrl.set_integrator_max(_param_fw_wr_imax.get());
 	_wheel_ctrl.set_max_rate(radians(_param_fw_w_rmax.get()));
 
+	/* pitch trim calculations */
+	_pitch_trim_moment_vtrim = _parameters.trim_pitch * _parameters.airspeed_trim * _parameters.airspeed_trim;
+
+	if (_parameters.airspeed_trim > _parameters.airspeed_min + 0.5f) {
+		_pitch_trim_moment_slope_low = (_pitch_trim_moment_vtrim - (_parameters.dtrim_pitch_vmin + _parameters.trim_pitch) *
+						_parameters.airspeed_min * _parameters.airspeed_min) / (_parameters.airspeed_trim - _parameters.airspeed_min);
+
+	} else {
+		_pitch_trim_moment_slope_low = 0;
+	}
+
+	if (_parameters.airspeed_trim < _parameters.airspeed_max - 0.5f) {
+		_pitch_trim_moment_slope_high = (_pitch_trim_moment_vtrim - (_parameters.dtrim_pitch_vmax + _parameters.trim_pitch) *
+						 _parameters.airspeed_max * _parameters.airspeed_max) / (_parameters.airspeed_trim - _parameters.airspeed_max);
+
+	} else {
+		_pitch_trim_moment_slope_high = 0;
+	}
+
+
 	return PX4_OK;
 }
 
@@ -238,24 +258,6 @@ FixedwingAttitudeControl::vehicle_motor_airstream_poll()
 	if (_vehicle_motor_airstream_sub.update(&_vehicle_motor_airstream)) {
 		if (hrt_elapsed_time(&_vehicle_motor_airstream.timestamp) < 1_s
 		    && _vehicle_motor_airstream.required_as_elev > 0.0f) {
-
-			_pitch_trim_moment_vtrim = _parameters.trim_pitch * _vehicle_motor_airstream.as_elev_trim_as_level_sq;
-
-			if (_parameters.airspeed_trim > _parameters.airspeed_min + 0.5f) {
-				_pitch_trim_moment_slope_low = (_pitch_trim_moment_vtrim - (_parameters.dtrim_pitch_vmin + _parameters.trim_pitch) *
-								_vehicle_motor_airstream.as_elev_min_as_level_sq) / (_parameters.airspeed_trim - _parameters.airspeed_min);
-
-			} else {
-				_pitch_trim_moment_slope_low = 0;
-			}
-
-			if (_parameters.airspeed_trim < _parameters.airspeed_max - 0.5f) {
-				_pitch_trim_moment_slope_high = (_pitch_trim_moment_vtrim - (_parameters.dtrim_pitch_vmax + _parameters.trim_pitch) *
-								 _vehicle_motor_airstream.as_elev_max_as_level_sq) / (_parameters.airspeed_trim - _parameters.airspeed_max);
-
-			} else {
-				_pitch_trim_moment_slope_high = 0;
-			}
 
 			_motor_airstream_valid = true;
 
