@@ -679,7 +679,8 @@ PARAM_DEFINE_FLOAT(FW_DTRIM_R_VMIN, 0.0f);
  * Pitch trim increment at minimum airspeed
  *
  * This increment is added to TRIM_PITCH when airspeed is FW_AIRSPD_MIN.
- * Should be measured with no motor airstream hitting the elevator.
+ * Should be measured with zero throttle. In case the airspeed setpoint
+ * is lower than FW_AIRSPD_MIN, the trim output will be extrapolated.
  *
  * @group FW Attitude Control
  * @min -0.25
@@ -719,7 +720,7 @@ PARAM_DEFINE_FLOAT(FW_DTRIM_R_VMAX, 0.0f);
  * Pitch trim increment at maximum airspeed
  *
  * This increment is added to TRIM_PITCH when airspeed is FW_AIRSPD_MAX.
- * Should be measured with no motor airstream hitting the elevator.
+ * Should be measured with full throttle.
  *
  * @group FW Attitude Control
  * @min -0.25
@@ -759,7 +760,7 @@ PARAM_DEFINE_FLOAT(FW_DTRIM_R_FLPS, 0.0f);
  * Pitch trim increment for flaps configuration
  *
  * This increment is added to the pitch trim whenever flaps are fully deployed.
- * Should be measured with no motor airstream hitting the elevator.
+ * Should be measured with landing configuration throttle and airspeed.
  *
  * @group FW Attitude Control
  * @min -0.25
