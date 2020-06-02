@@ -148,17 +148,4 @@ void update_parameters(const ParameterHandles &parameter_handles, Parameters &pa
 	param_get(parameter_handles.air_tube_diameter_mm, &parameters.air_tube_diameter_mm);
 }
 
-/* parameters that we want to update even when armed */
-int update_parameters_armed(const ParameterHandles &parameter_handles, Parameters &parameters)
-{
-	int ret = PX4_OK;
-
-	param_get(parameter_handles.baro_qnh, &(parameters.baro_qnh));
-	param_get(parameter_handles.baro_qnh_change_rate, &(parameters.baro_qnh_change_rate));
-
-	return ret;
-}
-
-
-
 } /* namespace sensors */
