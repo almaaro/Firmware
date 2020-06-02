@@ -169,7 +169,7 @@ private:
 	uORB::Publication<position_controller_landing_status_s>	_pos_ctrl_landing_status_pub{ORB_ID(position_controller_landing_status)};	///< landing status publication
 	uORB::Publication<tecs_status_s>			_tecs_status_pub{ORB_ID(tecs_status)};						///< TECS status publication
 
-	actuator_controls_s             _actuators_0 {}
+	actuator_controls_s             _actuators_0 {};
 	manual_control_setpoint_s	_manual {};			///< r/c channel data
 	position_setpoint_triplet_s	_pos_sp_triplet {};		///< triplet of mission items
 	vehicle_attitude_s		_att {};			///< vehicle attitude setpoint
