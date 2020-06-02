@@ -391,7 +391,7 @@ private:
                 (ParamFloat<px4::params::FW_LND_WAIT_TERR>) _param_fw_lnd_wait_terr,
 		(ParamBool<px4::params::FW_LND_EARLYCFG>) _param_fw_lnd_earlycfg,
 		(ParamBool<px4::params::FW_LND_USETER>) _param_fw_lnd_useter,
-                (ParamBool<px4::params::FW_LND_REQ_TERR>) _param_fw_lnd_useter,
+                (ParamBool<px4::params::FW_LND_REQ_TERR>) _param_fw_lnd_req_terr,
 
 		(ParamFloat<px4::params::FW_P_LIM_MAX>) _param_fw_p_lim_max,
 		(ParamFloat<px4::params::FW_P_LIM_MIN>) _param_fw_p_lim_min,
