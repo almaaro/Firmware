@@ -539,8 +539,7 @@ void FixedwingAttitudeControl::Run()
 			 * The airstream velocity is calculated by V2 = airspeed + motor_delta_V * scaler
 			 */
                         float req_pitch_moment = _pitch_trim_moment_vtrim;
-			float airstream_velocity_elevator = max(_param_fw_airspd_min.get(),
-								airspeed + _param_fw_thr_as_elev * _vehicle_motor_airstream.required_delta_v);
+                        float airstream_velocity_elevator = max(_param_fw_airspd_min.get(), _vehicle_motor_airstream.required_as_elev);
 
 			if (airspeed < _param_fw_airspd_trim.get()) {
 				trim_roll += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(),
