@@ -395,12 +395,7 @@ FixedwingPositionControl::motor_airstream_publish()
 	motor_airstream.as_elev_max_as_level_sq = _tecs.get_as_elev_max_as_level_sq();
 	motor_airstream.timestamp = hrt_absolute_time();
 
-	if (_vehicle_motor_airstream_pub != nullptr) {
-		orb_publish(ORB_ID(vehicle_motor_airstream), _vehicle_motor_airstream_pub, &motor_airstream);
-
-	} else {
-		_vehicle_motor_airstream_pub = orb_advertise(ORB_ID(vehicle_motor_airstream), &motor_airstream);
-	}
+	_vehicle_motor_airstream_pub.publish(motor_airstream);
 }
 
 void
