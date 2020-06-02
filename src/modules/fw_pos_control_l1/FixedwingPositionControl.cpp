@@ -162,8 +162,8 @@ FixedwingPositionControl::vehicle_control_mode_poll()
 			if (!was_armed && _control_mode.flag_armed) {
 				reset_takeoff_state(true);
 
-                                _land_terrain_alt_offset_temporary = 0.0f;
-                                _land_terrain_alt_offset = 0.0f;
+				_land_terrain_alt_offset = 0.0f;
+				_land_terrain_alt_offset_prev = 0.0f;
 				reset_landing_state();
 			}
 		}
@@ -1324,8 +1324,8 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 
 	// we want the plane to keep tracking the desired flight path until we start flaring
 	// if we go into heading hold mode earlier then we risk to be pushed away from the runway by cross winds
-        if ((_param_fw_lnd_hhdist.get() > 0.0f) && !_land_noreturn_horizontal &&
-            ((wp_distance + _land_touchdown_point_shift < _param_fw_lnd_hhdist.get())
+	if ((_param_fw_lnd_hhdist.get() > 0.0f) && !_land_noreturn_horizontal &&
+	    ((wp_distance + _land_touchdown_point_shift < _param_fw_lnd_hhdist.get())
 	     || _land_noreturn_vertical)) {
 
 		if (pos_sp_prev.valid) {
@@ -1363,25 +1363,25 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 	// default to no terrain estimation, just use landing waypoint altitude
 	float terrain_alt = pos_sp_curr.alt;
 
-        if (_param_fw_lnd_useter.get() == 1) {
-                if (_local_pos.dist_bottom_valid) {
-                        // all good, have valid terrain altitude
-                        float terrain_vpos = _local_pos.dist_bottom + _local_pos.z;
-                        terrain_alt = (_local_pos.ref_alt - terrain_vpos);
-                        _t_alt_prev_valid = terrain_alt;
-                        _time_last_t_alt = hrt_absolute_time();
+	if (_param_fw_lnd_useter.get() == 1) {
+		if (_local_pos.dist_bottom_valid) {
+			// all good, have valid terrain altitude
+			float terrain_vpos = _local_pos.dist_bottom + _local_pos.z;
+			terrain_alt = (_local_pos.ref_alt - terrain_vpos);
+			_t_alt_prev_valid = terrain_alt;
+			_time_last_t_alt = hrt_absolute_time();
 
-                        // update the terrain altitude offset to the correct level (to be used on the next landing attempt)
+			// update the terrain altitude offset to the correct level (to be used on the next landing attempt)
 			// by checking that we are on slope or flaring we make sure that we are at least somewhat close to the landing point
 			if (_land_onslope || _land_noreturn_vertical) {
 				// there has not been a valid estimate in a long time -> take it straight away
 				if (_time_last_t_alt == 0) {
-                                        _land_terrain_alt_offset = terrain_alt - (pos_sp_curr.alt - _land_terrain_alt_offset_prev);
+					_land_terrain_alt_offset = terrain_alt - (pos_sp_curr.alt - _land_terrain_alt_offset_prev);
 
 				} else {
 					// use a low pass filter
-                                        _land_terrain_alt_offset = 0.05f * (terrain_alt - (pos_sp_curr.alt - _land_terrain_alt_offset_prev)) +
-                                                                             0.95f * _land_terrain_alt_offset;
+					_land_terrain_alt_offset = 0.05f * (terrain_alt - (pos_sp_curr.alt - _land_terrain_alt_offset_prev)) +
+								   0.95f * _land_terrain_alt_offset;
 				}
 			}
 
@@ -1391,7 +1391,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 			// we have started landing phase but don't have valid terrain
 			// wait for some time, maybe we will soon get a valid estimate
 			// until then just use the altitude of the landing waypoint
-                        if (hrt_elapsed_time(&_time_started_landing) < _param_fw_lnd_wait_terr * 1_s) {
+			if (hrt_elapsed_time(&_time_started_landing) < _param_fw_lnd_wait_terr * 1_s) {
 				terrain_alt = pos_sp_curr.alt;
 
 			} else {
@@ -1400,7 +1400,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 				abort_landing(true);
 			}
 
-                } else if ((!_local_pos.dist_bottom_valid && hrt_elapsed_time(&_time_last_t_alt) < _param_fw_lnd_terr_to * 1_s)
+		} else if ((!_local_pos.dist_bottom_valid && hrt_elapsed_time(&_time_last_t_alt) < _param_fw_lnd_terr_to * 1_s)
 			   || _land_noreturn_vertical) {
 			// use previous terrain estimate for some time and hope to recover
 			// if we are already flaring (land_noreturn_vertical) then just
@@ -1419,10 +1419,10 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 	 * Checking for land_noreturn to avoid unwanted climb out
 	 */
 
-        if (_land_noreturn_vertical || (_current_altitude < _landingslope.flare_relative_alt() + terrain_alt) &&
+	if (_land_noreturn_vertical || (_current_altitude < _landingslope.flare_relative_alt() + terrain_alt) &&
 	    (wp_distance < _landingslope.flare_length() - _land_touchdown_point_shift) &&
-            ((_param_fw_lnd_req_terr.get() && _time_last_t_alt > 0 && _land_rngfnd_bump_handled)
-             || !_param_fw_lnd_req_terr.get() || !_param_fw_lnd_useter.get())) {
+	    ((_param_fw_lnd_req_terr.get() && _time_last_t_alt > 0 && _land_rngfnd_bump_handled)
+	     || !_param_fw_lnd_req_terr.get() || !_param_fw_lnd_useter.get())) {
 
 		if (!_land_noreturn_vertical) {
 			_land_noreturn_vertical  = true;
@@ -1487,14 +1487,14 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 		float landing_slope_alt_rel_desired = _landingslope.getLandingSlopeRelativeAltitude(
 				wp_distance + _land_touchdown_point_shift);
 
-                if (_current_altitude > terrain_alt + landing_slope_alt_rel_desired || _land_onslope) {
+		if (_current_altitude > terrain_alt + landing_slope_alt_rel_desired || _land_onslope) {
 
 			// Check if we've gone way past the landing point without starting to flare
-                        if (wp_distance < - _param_fw_lnd_max_mv.get() && _time_last_t_alt == 0) {
+			if (wp_distance < - _param_fw_lnd_max_mv.get() && _time_last_t_alt == 0) {
 				// if we don't have valid terrain here and we are under (terrain_alt + 0.5*FW_LND_FLALT), set the terrain altitude offset
 				// so that the landing altitude will be (our current altitude - 0.5*FW_LND_FLALT) on the next landing approach.
-                                if (_time_last_t_alt == 0 && _current_altitude < terrain_alt + 0.5f * _landingslope.flare_relative_alt()) {
-                                        _land_terrain_alt_offset = _current_altitude - 0.5f * _landingslope.flare_relative_alt() -
+				if (_time_last_t_alt == 0 && _current_altitude < terrain_alt + 0.5f * _landingslope.flare_relative_alt()) {
+					_land_terrain_alt_offset = _current_altitude - 0.5f * _landingslope.flare_relative_alt() -
 								   (terrain_alt - _land_terrain_alt_offset_prev);
 				}
 
@@ -1508,8 +1508,8 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 				// Move the land point forward so that we seem to be at the correct altitude
 				// if the altitude error would be over FW_LND_GS_TOL of the current slope altitude setpoint
 				// and the new altitude setpoint would be under FW_LND_MV_ALT
-                                if ((_current_altitude - terrain_alt) > landing_slope_alt_rel_desired &&
-                                    landing_slope_alt_rel_desired < _param_fw_lnd_mv_alt) {
+				if ((_current_altitude - terrain_alt) > landing_slope_alt_rel_desired &&
+				    landing_slope_alt_rel_desired < _param_fw_lnd_mv_alt) {
 					_land_touchdown_point_shift = _landingslope.getLandingSlopeWPDistance(landing_slope_alt_rel_desired + pos_sp_curr.alt,
 								      terrain_alt,
 								      _landingslope.horizontal_slope_displacement(),
@@ -1522,7 +1522,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 					mavlink_log_info(&_mavlink_log_pub, "TD moved %d", (int)_land_touchdown_point_shift);
 
 					//Check if the slope shift was too much at this point
-                                        if (_land_touchdown_point_shift > _param_fw_lnd_max_mv.get()) {
+					if (_land_touchdown_point_shift > _param_fw_lnd_max_mv.get()) {
 						abort_landing(true);
 					}
 
