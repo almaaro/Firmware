@@ -1720,7 +1720,7 @@ FixedwingPositionControl::Run()
                         _tecs.set_landing_flaps_applied(_landing_flaps_applied);
 
 			_flaps_applied = _actuators_0[actuator_controls_s::INDEX_FLAPS];
-			_tecs.set_landing_flaps_applied(_flaps_applied);
+			_tecs.set_flaps_applied(_flaps_applied);
 
 
 			if (_control_mode.flag_control_manual_enabled) {
