@@ -1386,7 +1386,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 			// we have started landing phase but don't have valid terrain
 			// wait for some time, maybe we will soon get a valid estimate
 			// until then just use the altitude of the landing waypoint
-			if (hrt_elapsed_time(&_time_started_landing) < _param_fw_lnd_wait_terr * 1_s) {
+			if (hrt_elapsed_time(&_time_started_landing) < _param_fw_lnd_wait_terr.get() * 1_s) {
 				terrain_alt = pos_sp_curr.alt;
 
 			} else {
@@ -1395,7 +1395,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 				abort_landing(true);
 			}
 
-		} else if ((!_local_pos.dist_bottom_valid && hrt_elapsed_time(&_time_last_t_alt) < _param_fw_lnd_terr_to * 1_s)
+		} else if ((!_local_pos.dist_bottom_valid && hrt_elapsed_time(&_time_last_t_alt) < _param_fw_lnd_terr_to.get() * 1_s)
 			   || _land_noreturn_vertical) {
 			// use previous terrain estimate for some time and hope to recover
 			// if we are already flaring (land_noreturn_vertical) then just
@@ -1504,7 +1504,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 				// if the altitude error would be over FW_LND_GS_TOL of the current slope altitude setpoint
 				// and the new altitude setpoint would be under FW_LND_MV_ALT
 				if ((_current_altitude - terrain_alt) > landing_slope_alt_rel_desired &&
-				    landing_slope_alt_rel_desired < _param_fw_lnd_mv_alt) {
+				    landing_slope_alt_rel_desired < _param_fw_lnd_mv_alt.get()) {
 					_land_touchdown_point_shift = _landingslope.getLandingSlopeWPDistance(landing_slope_alt_rel_desired + pos_sp_curr.alt,
 								      terrain_alt,
 								      _landingslope.horizontal_slope_displacement(),
