@@ -118,7 +118,7 @@ FixedwingPositionControl::parameters_update()
 	_tecs.set_use_advanced_thr_calculation(_param_fw_t_adv_thr.get());
 	_tecs.set_motor_airstream_at_elevator_scaler(_param_fw_thr_as_elev.get());
 	_tecs.set_pitchsp_offset_rad(radians(_param_fw_psp_off.get()));
-	_tecs.set_pitchsp_offset_landing_flaps_rad(radians(_param_fw_psp_off_flps.get()));
+	_tecs.set_pitchsp_offset_flaps_rad(radians(_param_fw_psp_off_flps.get()));
 	_tecs.set_cl_to_alpha_rad_slope(radians(_param_fw_t_cl_alpha.get()));
 	_tecs.set_wing_area(_param_fw_t_wing_area.get());
 
@@ -1698,26 +1698,26 @@ FixedwingPositionControl::Run()
 			// add attitude setpoint offsets
 			_att_sp.roll_body += radians(_param_fw_rsp_off.get());
 
-                        /* Giving the flaps setting to tecs */
-                        float flap_control = 0.0f;
+			/* Giving the flaps setting to tecs */
+			float flap_control = 0.0f;
 
-                        if (_att_sp.apply_flaps == vehicle_attitude_setpoint_s::FLAPS_LAND) {
-                                flap_control = 1.0f;
+			if (_att_sp.apply_flaps == vehicle_attitude_setpoint_s::FLAPS_LAND) {
+				flap_control = 1.0f;
 
-                        } else {
-                                flap_control = 0.0f;
-                        }
+			} else {
+				flap_control = 0.0f;
+			}
 
-                        // move the actual control value continuous with time, full flap travel in 1sec
-                        if (fabsf(_landing_flaps_applied - flap_control) > 0.01f) {
-                                _landing_flaps_applied += (_landing_flaps_applied - flap_control) < 0 ? dt : -dt;
-                                _landing_flaps_applied = constrain(_landing_flaps_applied, 0.0f, 1.0f);
+			// move the actual control value continuous with time, full flap travel in 1sec
+			if (fabsf(_landing_flaps_applied - flap_control) > 0.01f) {
+				_landing_flaps_applied += (_landing_flaps_applied - flap_control) < 0 ? dt : -dt;
+				_landing_flaps_applied = constrain(_landing_flaps_applied, 0.0f, 1.0f);
 
-                        } else {
-                                _landing_flaps_applied = flap_control;
-                        }
+			} else {
+				_landing_flaps_applied = flap_control;
+			}
 
-                        _tecs.set_landing_flaps_applied(_landing_flaps_applied);
+			_tecs.set_landing_flaps_applied(_landing_flaps_applied);
 
 			_flaps_applied = _actuators_0[actuator_controls_s::INDEX_FLAPS];
 			_tecs.set_flaps_applied(_flaps_applied);
