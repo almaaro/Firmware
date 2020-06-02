@@ -167,7 +167,7 @@ private:
 	uORB::Publication<position_controller_status_s>		_pos_ctrl_status_pub{ORB_ID(position_controller_status)};			///< navigation capabilities publication
 	uORB::Publication<position_controller_landing_status_s>	_pos_ctrl_landing_status_pub{ORB_ID(position_controller_landing_status)};	///< landing status publication
 	uORB::Publication<tecs_status_s>			_tecs_status_pub{ORB_ID(tecs_status)};						///< TECS status publication
-        uORB::Publication<_vehicle_motor_airstream_pub_s>       _vehicle_motor_airstream_pub{ORB_ID(vehicle_motor_airstream)};                  ///< The throttle setpoint contribution to control surface airspeed */
+	uORB::Publication<_vehicle_motor_airstream_pub_s>       _vehicle_motor_airstream_pub{ORB_ID(vehicle_motor_airstream)};                  ///< The throttle setpoint contribution to control surface airspeed */
 
 	manual_control_setpoint_s	_manual {};			///< r/c channel data
 	position_setpoint_triplet_s	_pos_sp_triplet {};		///< triplet of mission items
@@ -271,7 +271,6 @@ private:
 		FW_POSCTRL_MODE_OTHER
 	} _control_mode_current{FW_POSCTRL_MODE_OTHER};		///< used to check the mode in the last control loop iteration. Use to check if the last iteration was in the same mode.
 
-<<<<<<< HEAD
 	param_t _param_handle_airspeed_trans{PARAM_INVALID};
 	float _param_airspeed_trans{NAN};
 
@@ -415,8 +414,8 @@ private:
 		(ParamFloat<px4::params::FW_THR_LND_MAX>) _param_fw_thr_lnd_max,
 		(ParamFloat<px4::params::FW_THR_MAX>) _param_fw_thr_max,
 		(ParamFloat<px4::params::FW_THR_MIN>) _param_fw_thr_min,
-                (ParamFloat<px4::params::FW_THR_SLEW_MAX>) _param_fw_thr_slew_max,
-                (ParamFloat<px4::params::FW_THR_AS_ELEV>) _param_fw_thr_as_elev,
+		(ParamFloat<px4::params::FW_THR_SLEW_MAX>) _param_fw_thr_slew_max,
+		(ParamFloat<px4::params::FW_THR_AS_ELEV>) _param_fw_thr_as_elev,
 
 		// external parameters
 		(ParamInt<px4::params::FW_ARSP_MODE>) _param_fw_arsp_mode,
