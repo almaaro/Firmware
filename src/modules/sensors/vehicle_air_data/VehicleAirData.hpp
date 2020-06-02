@@ -114,5 +114,4 @@ private:
 	/* baro qnh changes */
 	float _baro_qnh_rate_limited{0.0f};
 	hrt_abstime _baro_qnh_last_update_t{0};
-
 };
