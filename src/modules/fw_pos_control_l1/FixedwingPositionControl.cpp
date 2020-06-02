@@ -1587,7 +1587,7 @@ FixedwingPositionControl::Run()
 			_att_sp.roll_body += radians(_param_fw_rsp_off.get());
 			_att_sp.pitch_body += radians(_param_fw_psp_off.get());
 
-			_flaps_applied = _actuators_0[actuator_controls_s::INDEX_FLAPS];
+                        _flaps_applied = _actuators_0.control[actuator_controls_s::INDEX_FLAPS];
 			_tecs.set_flaps_applied(_flaps_applied);
 
 
