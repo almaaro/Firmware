@@ -1787,7 +1787,7 @@ FixedwingPositionControl::tecs_update_pitch_throttle(float alt_sp, float airspee
 				    pitch_min_rad, pitch_max_rad);
 
         //This might have been changed
-        _tecs.set_indicated_airspeed_min(_parameters.airspeed_min);
+        _tecs.set_indicated_airspeed_min(_param_fw_airspd_min.get());
 
 	tecs_status_publish();
 }
