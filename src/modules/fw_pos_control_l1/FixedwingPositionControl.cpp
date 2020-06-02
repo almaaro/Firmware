@@ -102,8 +102,8 @@ FixedwingPositionControl::parameters_update()
 	_tecs.set_time_const(_param_fw_t_thro_const.get());
 	_tecs.set_min_sink_rate(_param_fw_t_sink_min.get());
 	_tecs.set_throttle_damp(_param_fw_t_thr_damp.get());
-        _tecs.set_throttle_integrator_gain(_param_fw_t_i_gain_t.get());
-        _tecs.set_pitch_integrator_gain(_param_fw_t_i_gain_p.get());
+	_tecs.set_throttle_integrator_gain(_param_fw_t_i_gain_t.get());
+	_tecs.set_pitch_integrator_gain(_param_fw_t_i_gain_p.get());
 	_tecs.set_throttle_slewrate(_param_fw_thr_slew_max.get());
 	_tecs.set_vertical_accel_limit(_param_fw_t_vert_acc.get());
 	_tecs.set_speed_comp_filter_omega(_param_fw_t_spd_omega.get());
@@ -1700,10 +1700,6 @@ FixedwingPositionControl::Run()
 
 			_flaps_applied = _actuators_0[actuator_controls_s::INDEX_FLAPS];
 			_tecs.set_flaps_applied(_flaps_applied);
-
-			_flaps_applied = _actuators_0[actuator_controls_s::INDEX_FLAPS];
-			_tecs.set_flaps_applied(_flaps_applied);
-
 
 			if (_control_mode.flag_control_manual_enabled) {
 				_att_sp.roll_body = constrain(_att_sp.roll_body, -radians(_param_fw_man_r_max.get()),
