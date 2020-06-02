@@ -291,8 +291,8 @@ float FixedwingAttitudeControl::get_airspeed_and_update_scaling()
 	}
 
 	// Adjust the minimum airspeed to the flap setting
-	_airspeed_min_adj = _flaps_applied * _parameters.airspeed_min_flaps + (1.0f - _flaps_applied) *
-			    _parameters.airspeed_min;
+	_airspeed_min_adj = _flaps_applied * _param_fw_airspd_min_flps.get() + (1.0f - _flaps_applied) *
+			    _param_fw_airspd_min.get();
 
 	/*
 	 * For scaling our actuators using anything less than the min (close to stall)
@@ -480,7 +480,7 @@ void FixedwingAttitudeControl::Run()
 			control_input.roll_setpoint = _att_sp.roll_body;
 			control_input.pitch_setpoint = _att_sp.pitch_body;
 			control_input.yaw_setpoint = _att_sp.yaw_body;
-                        control_input.airspeed_min = _airspeed_min_adj;
+			control_input.airspeed_min = _airspeed_min_adj;
 			control_input.airspeed_max = _param_fw_airspd_max.get();
 			control_input.airspeed = airspeed;
 			control_input.scaler = _airspeed_scaling;
@@ -757,7 +757,7 @@ void FixedwingAttitudeControl::control_flaps(const float dt)
 		}
 	}
 
-	float flaps_dt = dt / _parameters.flaps_rate;
+	float flaps_dt = dt / _param_fw_flaps_rate.get();
 
 	// move the actual control value continuous with time, full flap travel in
 	if (fabsf(_flaps_applied - flap_control) > 0.01f) {
