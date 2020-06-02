@@ -264,7 +264,7 @@ public:
 	/**
 	 * Get the terrain altitude offset to make altitude setpoints relative to the terrain altitude.
 	 *
-         * @return terrain altitude offset
+	 * @return terrain altitude offset
 	 */
 	float get_terrain_alt_offset();
 
