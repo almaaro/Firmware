@@ -114,6 +114,11 @@ void VehicleAirData::SensorCorrectionsUpdate()
 	}
 }
 
+void VehicleAirData::AirspeedUpdate()
+{
+	_airspeed_sub.update(&_airspeed)
+}
+
 void VehicleAirData::ParametersUpdate()
 {
 	// Check if parameters have changed
@@ -193,6 +198,7 @@ void VehicleAirData::Run()
 	if ((_selected_sensor_sub_index >= 0) && updated[_selected_sensor_sub_index]) {
 		ParametersUpdate();
 		SensorCorrectionsUpdate();
+		AirspeedUpdate();
 
 		const sensor_baro_s &baro = _last_data[_selected_sensor_sub_index];
 
@@ -205,6 +211,10 @@ void VehicleAirData::Run()
 		// Convert from millibar to Pa and apply temperature compensation
 		out.baro_pressure_pa = (100.0f * baro.pressure - _offset[_selected_sensor_sub_index]) *
 				       _scale[_selected_sensor_sub_index];
+
+		// Apply airspeed correction term
+		float correction = _airspeed.indicated_airspeed_m_s * _airspeed.indicated_airspeed_m_s * _param_sens_baro_as_comp.get();
+		out.baro_pressure_pa += correction;
 
 		// calculate altitude using the hypsometric equation
 		static constexpr float T1 = 15.0f - CONSTANTS_ABSOLUTE_NULL_CELSIUS; // temperature at base height in Kelvin
