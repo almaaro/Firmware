@@ -1588,7 +1588,7 @@ FixedwingPositionControl::Run()
 			_att_sp.pitch_body += radians(_param_fw_psp_off.get());
 
 			_flaps_applied = _actuators_0[actuator_controls_s::INDEX_FLAPS];
-			_tecs.set_landing_flaps_applied(_flaps_applied);
+			_tecs.set_flaps_applied(_flaps_applied);
 
 
 			if (_control_mode.flag_control_manual_enabled) {
