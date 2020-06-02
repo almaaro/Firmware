@@ -269,7 +269,6 @@ private:
 		FW_POSCTRL_MODE_OTHER
 	} _control_mode_current{FW_POSCTRL_MODE_OTHER};		///< used to check the mode in the last control loop iteration. Use to check if the last iteration was in the same mode.
 
-<<<<<<< HEAD
 	param_t _param_handle_airspeed_trans{PARAM_INVALID};
 	float _param_airspeed_trans{NAN};
 
@@ -401,10 +400,10 @@ private:
 		(ParamFloat<px4::params::FW_T_THRO_CONST>) _param_fw_t_thro_const,
 		(ParamFloat<px4::params::FW_T_TIME_CONST>) _param_fw_t_time_const,
 		(ParamFloat<px4::params::FW_T_VERT_ACC>) _param_fw_t_vert_acc,
-                (ParamFloat<px4::params::FW_T_WINGSPAN>) _param_fw_t_wingspan,
-                (ParamFloat<px4::params::FW_T_AUW>) _param_fw_t_auw,
-                (ParamFloat<px4::params::FW_T_PROP_DIA>) _param_fw_t_prop_dia,
-                (ParamBool<px4::params::FW_T_ADV_THR>) _param_fw_t_adv_thr,
+		(ParamFloat<px4::params::FW_T_WINGSPAN>) _param_fw_t_wingspan,
+		(ParamFloat<px4::params::FW_T_AUW>) _param_fw_t_auw,
+		(ParamFloat<px4::params::FW_T_PROP_DIA>) _param_fw_t_prop_dia,
+		(ParamBool<px4::params::FW_T_ADV_THR>) _param_fw_t_adv_thr,
 
 		(ParamFloat<px4::params::FW_THR_ALT_SCL>) _param_fw_thr_alt_scl,
 		(ParamFloat<px4::params::FW_THR_CRUISE>) _param_fw_thr_cruise,
