@@ -1395,7 +1395,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 		_tecs.set_pos_ctrl_hgt_rate(true, -flare_hgt_rate);
 
 		tecs_update_pitch_throttle(terrain_alt,
-					   calculate_target_airspeed(airspeed_land),
+					   calculate_target_airspeed(airspeed_land, ground_speed),
 					   radians(_param_fw_lnd_fl_pmin.get()),
 					   radians(_param_fw_lnd_fl_pmax.get()),
 					   0.0f,
