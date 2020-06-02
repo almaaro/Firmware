@@ -146,7 +146,7 @@ private:
 
 		(ParamFloat<px4::params::FW_AIRSPD_MAX>) _param_fw_airspd_max,
 		(ParamFloat<px4::params::FW_AIRSPD_MIN>) _param_fw_airspd_min,
-                (ParamFloat<px4::params::FW_AS_MIN_FLPS>) _param_fw_airspd_min_flps,
+		(ParamFloat<px4::params::FW_AS_MIN_FLPS>) _param_fw_airspd_min_flps,
 		(ParamFloat<px4::params::FW_AIRSPD_TRIM>) _param_fw_airspd_trim,
 		(ParamInt<px4::params::FW_ARSP_MODE>) _param_fw_arsp_mode,
 
@@ -167,6 +167,7 @@ private:
 		(ParamFloat<px4::params::FW_FLAPS_LND_SCL>) _param_fw_flaps_lnd_scl,
 		(ParamFloat<px4::params::FW_FLAPS_SCL>) _param_fw_flaps_scl,
 		(ParamFloat<px4::params::FW_FLAPS_TO_SCL>) _param_fw_flaps_to_scl,
+		(ParamFloat<px4::params::FW_FLAPS_RATE>) _param_fw_flaps_rate,
 
 		(ParamFloat<px4::params::FW_MAN_P_MAX>) _param_fw_man_p_max,
 		(ParamFloat<px4::params::FW_MAN_P_SC>) _param_fw_man_p_sc,

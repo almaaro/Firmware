@@ -150,6 +150,7 @@ private:
 
 	uORB::SubscriptionCallbackWorkItem _local_pos_sub{this, ORB_ID(vehicle_local_position)};
 
+	uORB::Subscription _actuators_0_sub{ORB_ID(actuator_controls)};                 ///< actuator controls
 	uORB::Subscription _control_mode_sub{ORB_ID(vehicle_control_mode)};		///< control mode subscription
 	uORB::Subscription _global_pos_sub{ORB_ID(vehicle_global_position)};
 	uORB::Subscription _manual_control_sub{ORB_ID(manual_control_setpoint)};	///< notification of manual control updates
@@ -167,6 +168,7 @@ private:
 	uORB::Publication<position_controller_landing_status_s>	_pos_ctrl_landing_status_pub{ORB_ID(position_controller_landing_status)};	///< landing status publication
 	uORB::Publication<tecs_status_s>			_tecs_status_pub{ORB_ID(tecs_status)};						///< TECS status publication
 
+	actuator_controls_s             _actuators_0 {}
 	manual_control_setpoint_s	_manual {};			///< r/c channel data
 	position_setpoint_triplet_s	_pos_sp_triplet {};		///< triplet of mission items
 	vehicle_attitude_s		_att {};			///< vehicle attitude setpoint
@@ -273,6 +275,8 @@ private:
 	param_t _param_handle_airspeed_trans{PARAM_INVALID};
 	float _param_airspeed_trans{NAN};
 
+	float _flaps_applied{0.0f};
+
 	// Update our local parameter cache.
 	int		parameters_update();
 
@@ -360,7 +364,7 @@ private:
 
 		(ParamFloat<px4::params::FW_AIRSPD_MAX>) _param_fw_airspd_max,
 		(ParamFloat<px4::params::FW_AIRSPD_MIN>) _param_fw_airspd_min,
-                (ParamFloat<px4::params::FW_AS_MIN_FLPS>) _param_fw_airspd_min_flps,
+		(ParamFloat<px4::params::FW_AS_MIN_FLPS>) _param_fw_airspd_min_flps,
 		(ParamFloat<px4::params::FW_AIRSPD_TRIM>) _param_fw_airspd_trim,
 
 		(ParamFloat<px4::params::FW_CLMBOUT_DIFF>) _param_fw_clmbout_diff,
