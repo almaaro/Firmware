@@ -111,7 +111,7 @@ FixedwingPositionControl::parameters_update()
 	_tecs.set_heightrate_p(_param_fw_t_hrate_p.get());
 	_tecs.set_heightrate_ff(_param_fw_t_hrate_ff.get());
 	_tecs.set_speedrate_p(_param_fw_t_srate_p.get());
-        _tecs.set_motor_airstream_at_elevator_scaler(_param_fw_thr_as_elev.get());
+	_tecs.set_motor_airstream_at_elevator_scaler(_param_fw_thr_as_elev.get());
 
 	// Landing slope
 	/* check if negative value for 2/3 of flare altitude is set for throttle cut */

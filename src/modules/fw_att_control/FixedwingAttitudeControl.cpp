@@ -242,19 +242,19 @@ FixedwingAttitudeControl::vehicle_motor_airstream_poll()
 			_motor_airstream_valid = true;
 
 			/* pitch trim calculations */
-			_pitch_trim_moment_vtrim = _parameters.trim_pitch * _vehicle_motor_airstream.as_elev_trim_as_level_sq;
+			_pitch_trim_moment_vtrim = _param_trim_pitch.get() * _vehicle_motor_airstream.as_elev_trim_as_level_sq;
 
-			if (_parameters.airspeed_trim > _parameters.airspeed_min + 0.5f) {
-				_pitch_trim_moment_slope_low = (_pitch_trim_moment_vtrim - (_parameters.dtrim_pitch_vmin + _parameters.trim_pitch) *
-								_parameters.airspeed_min * _parameters.airspeed_min) / (_parameters.airspeed_trim - _parameters.airspeed_min);
+			if (_param_fw_airspd_trim.get() > _param_fw_airspd_min.get() + 0.5f) {
+				_pitch_trim_moment_slope_low = (_pitch_trim_moment_vtrim - (_param_fw_dtrim_p_vmin.get() + _param_trim_pitch.get()) *
+								_param_fw_airspd_min.get() * _param_fw_airspd_min.get()) / (_param_fw_airspd_trim.get() - _param_fw_airspd_min.get());
 
 			} else {
 				_pitch_trim_moment_slope_low = 0;
 			}
 
-			if (_parameters.airspeed_trim < _parameters.airspeed_max - 0.5f) {
-				_pitch_trim_moment_slope_high = (_pitch_trim_moment_vtrim - (_parameters.dtrim_pitch_vmax + _parameters.trim_pitch) *
-								 _vehicle_motor_airstream.as_elev_max_as_level_sq) / (_parameters.airspeed_trim - _parameters.airspeed_max);
+			if (_param_fw_airspd_trim.get() < _param_fw_airspd_max.get() - 0.5f) {
+				_pitch_trim_moment_slope_high = (_pitch_trim_moment_vtrim - (_param_fw_dtrim_p_vmax.get() + _param_trim_pitch.get()) *
+								 _vehicle_motor_airstream.as_elev_max_as_level_sq) / (_param_fw_airspd_trim.get() - _param_fw_airspd_max.get());
 
 			} else {
 				_pitch_trim_moment_slope_high = 0;
@@ -297,12 +297,12 @@ float FixedwingAttitudeControl::get_airspeed_and_update_scaling()
 	 *
 	 * Forcing the scaling to this value allows reasonable handheld tests.
 	 */
-        float airspeed_constrained = constrain(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_max.get());
+	float airspeed_constrained = constrain(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_max.get());
 
 	_airspeed_scaling = (_param_fw_arsp_scale_en.get()) ? (_param_fw_airspd_trim.get() / airspeed_constrained) : 1.0f;
 
 	//The elevator needs a different scaler as the motor airstream may hit it.
-        airspeed_constrained = math::max(_vehicle_motor_airstream.required_as_elev, _param_fw_airspd_min.get());
+	airspeed_constrained = math::max(_vehicle_motor_airstream.required_as_elev, _param_fw_airspd_min.get());
 
 	if (_motor_airstream_valid) {
 		_airspeed_scaling_elevator = sqrtf(_vehicle_motor_airstream.as_elev_trim_as_level_sq) / airspeed_constrained;
@@ -521,129 +521,133 @@ void FixedwingAttitudeControl::Run()
 			float trim_yaw = _param_trim_yaw.get();
 
 
-                        /* Calculating the pitch trim based on the required moment and airstream scaling.
-                         *
-                         * We know that the pitching moment changes depending on airspeed (and alpha, but assuming that alpha is constant
-                         * at a given airspeed at cruise flight.). We also know that the elevtor pitching moment is proportional to the
-                         * square of the airstream velocity hitting the elevtor. Now we can calculate the required charasteristic pitching moments at
-                         * given airspeeds. (M = k * _pitch_trim * (airstream velocity)^2 where k can remain unknown assuming that the air density remains
-                         * constant).
-                         *
-                         * Here we first calculate the required charasteristic pitching moment for the airspeed by interpolating. Then we get the pitch trim increment by dividing
-                         * it with the square of the speed of the airstream hitting the elevator.
-                         *
-                         * The airstream velocity is calculated by V2 = airspeed + motor_delta_V * scaler
-                         */
-                        float req_pitch_moment = _pitch_trim_moment;
-                        float airstream_velocity_elevator = max(_param_fw_airspd_min.get(),
-                                                                airspeed + _param_fw_thr_as_elev * _vehicle_motor_airstream.required_delta_v);
+			/* Calculating the pitch trim based on the required moment and airstream scaling.
+			 *
+			 * We know that the pitching moment changes depending on airspeed (and alpha, but assuming that alpha is constant
+			 * at a given airspeed at cruise flight.). We also know that the elevtor pitching moment is proportional to the
+			 * square of the airstream velocity hitting the elevtor. Now we can calculate the required charasteristic pitching moments at
+			 * given airspeeds. (M = k * _pitch_trim * (airstream velocity)^2 where k can remain unknown assuming that the air density remains
+			 * constant).
+			 *
+			 * Here we first calculate the required charasteristic pitching moment for the airspeed by interpolating. Then we get the pitch trim increment by dividing
+			 * it with the square of the speed of the airstream hitting the elevator.
+			 *
+			 * The airstream velocity is calculated by V2 = airspeed + motor_delta_V * scaler
+			 */
+			float req_pitch_moment = _pitch_trim_moment;
+			float airstream_velocity_elevator = max(_param_fw_airspd_min.get(),
+								airspeed + _param_fw_thr_as_elev * _vehicle_motor_airstream.required_delta_v);
 
-                        if (airspeed < _param_fw_airspd_trim.get()) {
-                                trim_roll += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(), _param_fw_dtrim_r_vmin.get(),
-                                                           0.0f);
-                                req_pitch_moment += (airspeed - _param_fw_airspd_trim) * _pitch_trim_moment_slope_low;
-                                trim_pitch += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(), _param_fw_dtrim_p_vmin.get(),
-                                                            0.0f);
-                                trim_yaw += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(), _param_fw_dtrim_y_vmin.get(),
-                                                          0.0f);
+			if (airspeed < _param_fw_airspd_trim.get()) {
+				trim_roll += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(),
+							   _param_fw_dtrim_r_vmin.get(),
+							   0.0f);
+				req_pitch_moment += (airspeed - _param_fw_airspd_trim) * _pitch_trim_moment_slope_low;
+				trim_pitch += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(),
+							    _param_fw_dtrim_p_vmin.get(),
+							    0.0f);
+				trim_yaw += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(),
+							  _param_fw_dtrim_y_vmin.get(),
+							  0.0f);
 
-                        } else {
-                                trim_roll += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
-                                                           _param_fw_dtrim_r_vmax.get());
-                                req_pitch_moment += (airspeed - _param_fw_airspd_trim.get()) * _pitch_trim_moment_slope_high;
-                                trim_pitch += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
-                                                            _param_fw_dtrim_p_vmax.get());
-                                trim_yaw += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
-                                                          _param_fw_dtrim_y_vmax.get());
-                        }
+			} else {
+				trim_roll += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
+							   _param_fw_dtrim_r_vmax.get());
+				req_pitch_moment += (airspeed - _param_fw_airspd_trim.get()) * _pitch_trim_moment_slope_high;
+				trim_pitch += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
+							    _param_fw_dtrim_p_vmax.get());
+				trim_yaw += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
+							  _param_fw_dtrim_y_vmax.get());
+			}
 
-                        if (_motor_airstream_valid) {
-                                trim_pitch = req_pitch_moment / (airstream_velocity_elevator * airstream_velocity_elevator);
-                        }
+			if (_motor_airstream_valid) {
+				trim_pitch = req_pitch_moment / (airstream_velocity_elevator * airstream_velocity_elevator);
+			}
 
-                        /* add trim increment if flaps are deployed  */
-                        trim_roll += _flaps_applied * _param_fw_dtrim_r_flps.get();
-                        trim_pitch += _flaps_applied * _param_fw_dtrim_p_flps.get();
+			/* add trim increment if flaps are deployed  */
+			trim_roll += _flaps_applied * _param_fw_dtrim_r_flps.get();
+			trim_pitch += _flaps_applied * _param_fw_dtrim_p_flps.get();
 
-                        /* Run attitude controllers */
-                        if (_vcontrol_mode.flag_control_attitude_enabled) {
-                                if (PX4_ISFINITE(_att_sp.roll_body) && PX4_ISFINITE(_att_sp.pitch_body)) {
-                                        _roll_ctrl.control_attitude(control_input);
-                                        _pitch_ctrl.control_attitude(control_input);
+			/* Run attitude controllers */
+			if (_vcontrol_mode.flag_control_attitude_enabled) {
+				if (PX4_ISFINITE(_att_sp.roll_body) && PX4_ISFINITE(_att_sp.pitch_body)) {
+					_roll_ctrl.control_attitude(control_input);
+					_pitch_ctrl.control_attitude(control_input);
 
-                                        if (wheel_control) {_wheel_ctrl.control_attitude(control_input);
-                                                _yaw_ctrl.reset_integrator();
+					if (wheel_control) {
+						_wheel_ctrl.control_attitude(control_input);
+						_yaw_ctrl.reset_integrator();
 
-                                        } else {
-                                                // runs last, because is depending on output of roll and pitch attitude
-                                                _yaw_ctrl.control_attitude(control_input);
-                                                _wheel_ctrl.reset_integrator();
-                                        }
+					} else {
+						// runs last, because is depending on output of roll and pitch attitude
+						_yaw_ctrl.control_attitude(control_input);
+						_wheel_ctrl.reset_integrator();
+					}
 
-                                        /* Update input data for rate controllers */
-                                        control_input.roll_rate_setpoint = _roll_ctrl.get_desired_rate();
-                                        control_input.pitch_rate_setpoint = _pitch_ctrl.get_desired_rate();
-                                        control_input.yaw_rate_setpoint = _yaw_ctrl.get_desired_rate();
+					/* Update input data for rate controllers */
+					control_input.roll_rate_setpoint = _roll_ctrl.get_desired_rate();
+					control_input.pitch_rate_setpoint = _pitch_ctrl.get_desired_rate();
+					control_input.yaw_rate_setpoint = _yaw_ctrl.get_desired_rate();
 
-                                        /* Run attitude RATE controllers which need the desired attitudes from above, add trim */
-                                        float roll_u = _roll_ctrl.control_euler_rate(control_input);
-                                        _actuators.control[actuator_controls_s::INDEX_ROLL] = (PX4_ISFINITE(roll_u)) ? roll_u + trim_roll : trim_roll;
+					/* Run attitude RATE controllers which need the desired attitudes from above, add trim */
+					float roll_u = _roll_ctrl.control_euler_rate(control_input);
+					_actuators.control[actuator_controls_s::INDEX_ROLL] = (PX4_ISFINITE(roll_u)) ? roll_u + trim_roll : trim_roll;
 
-                                        if (!PX4_ISFINITE(roll_u)) {
-                                                _roll_ctrl.reset_integrator();
-                                        }
+					if (!PX4_ISFINITE(roll_u)) {
+						_roll_ctrl.reset_integrator();
+					}
 
-                                        // The elevator has a different scaler
-                                        control_input.scaler = _airspeed_scaling_elevator;
-                                        float pitch_u = _pitch_ctrl.control_bodyrate(control_input);
-                                        _actuators.control[actuator_controls_s::INDEX_PITCH] = (PX4_ISFINITE(pitch_u)) ? pitch_u + trim_pitch : trim_pitch;
-                                        control_input.scaler = _airspeed_scaling;
+					// The elevator has a different scaler
+					control_input.scaler = _airspeed_scaling_elevator;
+					float pitch_u = _pitch_ctrl.control_bodyrate(control_input);
+					_actuators.control[actuator_controls_s::INDEX_PITCH] = (PX4_ISFINITE(pitch_u)) ? pitch_u + trim_pitch : trim_pitch;
+					control_input.scaler = _airspeed_scaling;
 
-                                        if (!PX4_ISFINITE(pitch_u)) {
-                                                _pitch_ctrl.reset_integrator();
-                                        }
+					if (!PX4_ISFINITE(pitch_u)) {
+						_pitch_ctrl.reset_integrator();
+					}
 
-                                        float yaw_u = 0.0f;
+					float yaw_u = 0.0f;
 
-                                        if (wheel_control) {
-                                                yaw_u = _wheel_ctrl.control_bodyrate(control_input);
+					if (wheel_control) {
+						yaw_u = _wheel_ctrl.control_bodyrate(control_input);
 
-                                        } else {
-                                                yaw_u = _yaw_ctrl.control_euler_rate(control_input);
-                                        }
+					} else {
+						yaw_u = _yaw_ctrl.control_euler_rate(control_input);
+					}
 
-                                        _actuators.control[actuator_controls_s::INDEX_YAW] = (PX4_ISFINITE(yaw_u)) ? yaw_u + trim_yaw : trim_yaw;
+					_actuators.control[actuator_controls_s::INDEX_YAW] = (PX4_ISFINITE(yaw_u)) ? yaw_u + trim_yaw : trim_yaw;
 
-                                        /* add in manual rudder control in manual modes */
-                                        if (_vcontrol_mode.flag_control_manual_enabled) {
-                                                _actuators.control[actuator_controls_s::INDEX_YAW] += _manual.r;
-                                        }
+					/* add in manual rudder control in manual modes */
+					if (_vcontrol_mode.flag_control_manual_enabled) {
+						_actuators.control[actuator_controls_s::INDEX_YAW] += _manual.r;
+					}
 
-                                        if (!PX4_ISFINITE(yaw_u)) {
-                                                _yaw_ctrl.reset_integrator();
-                                                _wheel_ctrl.reset_integrator();
-                                        }
+					if (!PX4_ISFINITE(yaw_u)) {
+						_yaw_ctrl.reset_integrator();
+						_wheel_ctrl.reset_integrator();
+					}
 
-                                        /* throttle passed through if it is finite and if no engine failure was detected */
-                                        _actuators.control[actuator_controls_s::INDEX_THROTTLE] = (PX4_ISFINITE(_att_sp.thrust_body[0])
-                                                        && !_vehicle_status.engine_failure) ? _att_sp.thrust_body[0] : 0.0f;
+					/* throttle passed through if it is finite and if no engine failure was detected */
+					_actuators.control[actuator_controls_s::INDEX_THROTTLE] = (PX4_ISFINITE(_att_sp.thrust_body[0])
+							&& !_vehicle_status.engine_failure) ? _att_sp.thrust_body[0] : 0.0f;
 
-                                        /* scale effort by battery status */
-                                        if (_param_fw_bat_scale_en.get() &&
-                                            _actuators.control[actuator_controls_s::INDEX_THROTTLE] > 0.1f) {
+					/* scale effort by battery status */
+					if (_param_fw_bat_scale_en.get() &&
+					    _actuators.control[actuator_controls_s::INDEX_THROTTLE] > 0.1f) {
 
-                                                if (_battery_status_sub.updated()) {
-                                                        battery_status_s battery_status{};
+						if (_battery_status_sub.updated()) {
+							battery_status_s battery_status{};
 
-                                                        if (_battery_status_sub.copy(&battery_status)) {
-                                                                if (battery_status.scale > 0.0f) {
-                                                                        _battery_scale = battery_status.scale;
-                                                                }
-                                                        }
-                                                }
+							if (_battery_status_sub.copy(&battery_status)) {
+								if (battery_status.scale > 0.0f) {
+									_battery_scale = battery_status.scale;
+								}
+							}
+						}
 
-                                                _actuators.control[actuator_controls_s::INDEX_THROTTLE] *= _battery_scale;
-                                        }
+						_actuators.control[actuator_controls_s::INDEX_THROTTLE] *= _battery_scale;
+					}
 
 				}
 
@@ -670,15 +674,15 @@ void FixedwingAttitudeControl::Run()
 				float yaw_u = _yaw_ctrl.control_bodyrate(control_input);
 				_actuators.control[actuator_controls_s::INDEX_YAW] = (PX4_ISFINITE(yaw_u)) ? yaw_u + trim_yaw : trim_yaw;
 
-                                // The elevator has a different scaler
-                                control_input.scaler = _airspeed_scaling_elevator;
-                                float pitch_u = _pitch_ctrl.control_bodyrate(control_input);
-                                _actuators.control[actuator_controls_s::INDEX_PITCH] = (PX4_ISFINITE(pitch_u)) ? pitch_u + trim_pitch : trim_pitch;
-                                control_input.scaler = _airspeed_scaling;
+				// The elevator has a different scaler
+				control_input.scaler = _airspeed_scaling_elevator;
+				float pitch_u = _pitch_ctrl.control_bodyrate(control_input);
+				_actuators.control[actuator_controls_s::INDEX_PITCH] = (PX4_ISFINITE(pitch_u)) ? pitch_u + trim_pitch : trim_pitch;
+				control_input.scaler = _airspeed_scaling;
 
 				_actuators.control[actuator_controls_s::INDEX_THROTTLE] = PX4_ISFINITE(_rates_sp.thrust_body[0]) ?
 						_rates_sp.thrust_body[0] : 0.0f;
-                        }
+			}
 
 			rate_ctrl_status_s rate_ctrl_status{};
 			rate_ctrl_status.timestamp = hrt_absolute_time();
@@ -692,7 +696,7 @@ void FixedwingAttitudeControl::Run()
 				rate_ctrl_status.yawspeed_integ = _yaw_ctrl.get_integrator();
 			}
 
-                        _rate_ctrl_status_pub.publish(rate_ctrl_status);
+			_rate_ctrl_status_pub.publish(rate_ctrl_status);
 		}
 
 		// Add feed-forward from roll control output to yaw control output

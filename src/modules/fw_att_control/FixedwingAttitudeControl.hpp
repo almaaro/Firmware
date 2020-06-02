@@ -141,12 +141,12 @@ private:
 
 	bool _is_tailsitter{false};
 
-        //The charasteristic pitch trim moments at different airspeeds, used for pitch trim scaling.
-        float _pitch_trim_moment_slope_low{0.0f};
-        float _pitch_trim_moment_vtrim{0.0f};
-        float _pitch_trim_moment_slope_high{0.0f};
+	//The charasteristic pitch trim moments at different airspeeds, used for pitch trim scaling.
+	float _pitch_trim_moment_slope_low{0.0f};
+	float _pitch_trim_moment_vtrim{0.0f};
+	float _pitch_trim_moment_slope_high{0.0f};
 
-        bool _motor_airstream_valid{false};
+	bool _motor_airstream_valid{false};
 
 	DEFINE_PARAMETERS(
 		(ParamFloat<px4::params::FW_ACRO_X_MAX>) _param_fw_acro_x_max,
@@ -217,9 +217,9 @@ private:
 
 		(ParamFloat<px4::params::TRIM_PITCH>) _param_trim_pitch,
 		(ParamFloat<px4::params::TRIM_ROLL>) _param_trim_roll,
-                (ParamFloat<px4::params::TRIM_YAW>) _param_trim_yaw,
+		(ParamFloat<px4::params::TRIM_YAW>) _param_trim_yaw,
 
-                (ParamFloat<px4::params::FW_THR_AS_ELEV) _param_fw_thr_as_elev
+		(ParamFloat < px4::params::FW_THR_AS_ELEV) _param_fw_thr_as_elev
 	)
 
 	ECL_RollController		_roll_ctrl;
@@ -241,5 +241,5 @@ private:
 	void		vehicle_land_detected_poll();
 	void		vehicle_motor_airstream_poll();
 
-        float 		get_airspeed_and_update_scaling();
+	float 		get_airspeed_and_update_scaling();
 };
