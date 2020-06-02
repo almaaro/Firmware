@@ -116,7 +116,7 @@ void VehicleAirData::SensorCorrectionsUpdate()
 
 void VehicleAirData::AirspeedUpdate()
 {
-	_airspeed_sub.update(&_airspeed)
+        _airspeed_sub.update(&_airspeed);
 }
 
 void VehicleAirData::ParametersUpdate()
