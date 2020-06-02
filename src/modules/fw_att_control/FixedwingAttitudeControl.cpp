@@ -545,7 +545,7 @@ void FixedwingAttitudeControl::Run()
 				trim_roll += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(),
 							   _param_fw_dtrim_r_vmin.get(),
 							   0.0f);
-				req_pitch_moment += (airspeed - _param_fw_airspd_trim) * _pitch_trim_moment_slope_low;
+                                req_pitch_moment += (airspeed - _param_fw_airspd_trim.get()) * _pitch_trim_moment_slope_low;
 				trim_pitch += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(),
 							    _param_fw_dtrim_p_vmin.get(),
 							    0.0f);
