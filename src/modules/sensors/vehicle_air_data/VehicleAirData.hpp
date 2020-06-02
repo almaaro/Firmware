@@ -68,20 +68,20 @@ private:
 
 	void ParametersUpdate();
 	void SensorCorrectionsUpdate();
-        void AirspeedUpdate();
+	void AirspeedUpdate();
 
 	static constexpr int MAX_SENSOR_COUNT = 3;
 
 	DEFINE_PARAMETERS(
-                (ParamFloat<px4::params::SENS_BARO_QNH>) _param_sens_baro_qnh,
-                (ParamFloat<px4::params::BARO_AS_COMP>) _param_sens_baro_as_comp
+		(ParamFloat<px4::params::SENS_BARO_QNH>) _param_sens_baro_qnh,
+		(ParamFloat<px4::params::BARO_AS_COMP>) _param_sens_baro_as_comp
 	)
 
 	uORB::Publication<vehicle_air_data_s> _vehicle_air_data_pub{ORB_ID(vehicle_air_data)};
 
 	uORB::Subscription _params_sub{ORB_ID(parameter_update)};
 	uORB::Subscription _sensor_correction_sub{ORB_ID(sensor_correction)};
-        uORB::Subscription _airspeed_sub{ORB_ID(airspeed)};
+	uORB::Subscription _airspeed_sub{ORB_ID(airspeed)};
 
 	uORB::SubscriptionCallbackWorkItem _sensor_sub[MAX_SENSOR_COUNT] {
 		{this, ORB_ID(sensor_baro), 0},
@@ -108,5 +108,5 @@ private:
 
 	int8_t _selected_sensor_sub_index{-1};
 
-        airspeed_s _airspeed{};
+	airspeed_s _airspeed{};
 };
