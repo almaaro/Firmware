@@ -429,10 +429,9 @@ private:
 		(ParamFloat<px4::params::FW_T_WINGSPAN>) _param_fw_t_wingspan,
 		(ParamFloat<px4::params::FW_T_AUW>) _param_fw_t_auw,
 		(ParamFloat<px4::params::FW_T_PROP_DIA>) _param_fw_t_prop_dia,
-		(ParamBool<px4::params::FW_T_ADV_THR>) _param_fw_t_adv_thr,
-		(ParamFloat<px4::params::FW_T_VERT_ACC>) _param_fw_t_vert_acc,
 		(ParamFloat<px4::params::FW_T_CL_ALPHA>) _param_fw_t_cl_alpha,
 		(ParamFloat<px4::params::FW_T_WING_AREA>) _param_fw_t_wing_area,
+		(ParamBool<px4::params::FW_T_ADV_THR>) _param_fw_t_adv_thr,
 
 		(ParamFloat<px4::params::FW_THR_ALT_SCL>) _param_fw_thr_alt_scl,
 		(ParamFloat<px4::params::FW_THR_CRUISE>) _param_fw_thr_cruise,
