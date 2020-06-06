@@ -1503,8 +1503,6 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 					   false,
 					   radians(_param_fw_p_lim_min.get()));
 
-		_land_prev_tecs_alt_sp = altitude_desired;
-
 	}
 }
 
