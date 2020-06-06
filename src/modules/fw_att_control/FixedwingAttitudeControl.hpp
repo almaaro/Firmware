@@ -223,7 +223,7 @@ private:
 		(ParamFloat<px4::params::TRIM_ROLL>) _param_trim_roll,
 		(ParamFloat<px4::params::TRIM_YAW>) _param_trim_yaw,
 
-                (ParamFloat<px4::params::FW_THR_AS_ELEV>) _param_fw_thr_as_elev
+		(ParamFloat<px4::params::FW_THR_AS_ELEV>) _param_fw_thr_as_elev
 	)
 
 	ECL_RollController		_roll_ctrl;

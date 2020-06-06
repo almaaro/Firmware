@@ -77,4 +77,4 @@ PARAM_DEFINE_FLOAT(BARO_AS_COMP, 0.0f);
   * @group Sensors
   * @unit hPa/min
   */
- PARAM_DEFINE_FLOAT(SENS_QNH_RATE, 0.0f);
+PARAM_DEFINE_FLOAT(SENS_QNH_RATE, 0.0f);

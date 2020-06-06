@@ -284,11 +284,11 @@ FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand, const
 
 	if (_airspeed_valid && PX4_ISFINITE(_att_sp.roll_body)) {
 
-				adjusted_min_airspeed = constrain(_airspeed_min_adj / sqrtf(cosf(constrain(_att_sp.roll_body, -0.95f * M_PI_2_F,
-																						   0.95f * M_PI_2_F))),
-                                                  _airspeed_min_adj, _param_fw_airspd_max.get());
+		adjusted_min_airspeed = constrain(_airspeed_min_adj / sqrtf(cosf(constrain(_att_sp.roll_body, -0.95f * M_PI_2_F,
+						  0.95f * M_PI_2_F))),
+						  _airspeed_min_adj, _param_fw_airspd_max.get());
 
-                _tecs.set_indicated_airspeed_min(adjusted_min_airspeed);
+		_tecs.set_indicated_airspeed_min(adjusted_min_airspeed);
 
 	}
 
@@ -336,9 +336,9 @@ FixedwingPositionControl::calculate_roll_limit()
 	 *
 	 */
 	if (_airspeed_valid) {
-                float as_ratio = _airspeed_min_adj / constrain(_airspeed,
-                                 _airspeed_min_adj * 1.05f, _param_fw_airspd_max.get());
-                float roll_limit_adj_rad = constrain(acosf(as_ratio * as_ratio), radians(10.0f), radians(_param_fw_r_lim.get()));
+		float as_ratio = _airspeed_min_adj / constrain(_airspeed,
+				 _airspeed_min_adj * 1.05f, _param_fw_airspd_max.get());
+		float roll_limit_adj_rad = constrain(acosf(as_ratio * as_ratio), radians(10.0f), radians(_param_fw_r_lim.get()));
 
 		_l1_control.set_l1_roll_limit(roll_limit_adj_rad);
 	}
@@ -1437,7 +1437,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 		}
 
 		if ((_current_altitude < terrain_alt + _landingslope.motor_lim_relative_alt()) ||
-			_land_motor_lim) {
+		    _land_motor_lim) {
 			throttle_max = min(throttle_max, _param_fw_thr_lnd_max.get());
 
 			if (!_land_motor_lim) {
@@ -1451,7 +1451,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 		// (Negative) height rate setpoint during flare. Same as the glideslope hgt rate at flare alt
 		float gs_hgt_rate = _landingslope.landing_slope_angle_rad() * ground_speed.length();
 		float flare_hgt_rate = constrain((_current_altitude - terrain_alt) / _landingslope.flare_relative_alt(), 0.0f,
-										 gs_hgt_rate);
+						 gs_hgt_rate);
 
 		_tecs.set_pos_ctrl_hgt_rate(true, -flare_hgt_rate);
 
@@ -1694,7 +1694,7 @@ FixedwingPositionControl::Run()
 			// add attitude setpoint offsets
 			_att_sp.roll_body += radians(_param_fw_rsp_off.get());
 
-                        _flaps_applied = _actuators_0.control[actuator_controls_s::INDEX_FLAPS];
+			_flaps_applied = _actuators_0.control[actuator_controls_s::INDEX_FLAPS];
 			_tecs.set_flaps_applied(_flaps_applied);
 
 			if (_control_mode.flag_control_manual_enabled) {
@@ -1900,8 +1900,8 @@ FixedwingPositionControl::tecs_update_pitch_throttle(float alt_sp, float airspee
 				    throttle_min, throttle_max, throttle_cruise,
 				    pitch_min_rad, pitch_max_rad);
 
-        //This might have been changed
-        _tecs.set_indicated_airspeed_min(_param_fw_airspd_min.get());
+	//This might have been changed
+	_tecs.set_indicated_airspeed_min(_param_fw_airspd_min.get());
 
 	tecs_status_publish();
 	motor_airstream_publish();
