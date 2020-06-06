@@ -1551,6 +1551,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 			/* avoid glideslope start bump */
 			if (pos_sp_prev.valid) {
 				altitude_desired = min(altitude_desired, pos_sp_prev.alt);
+			}
 
 			if (!_land_onslope) {
 				mavlink_log_info(&_mavlink_log_pub, "Landing, on slope");
