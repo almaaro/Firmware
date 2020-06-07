@@ -1371,6 +1371,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 				// there has not been a valid estimate in a long time -> take it straight away
 				if (_time_last_t_alt == 0) {
 					_land_terrain_alt_offset = terrain_alt - (pos_sp_curr.alt - _land_terrain_alt_offset_prev);
+					mavlink_log_info(&_mavlink_log_pub, "init t alt offs x10 %d", (int)(_land_terrain_alt_offset *10));
 
 				} else {
 					// use a low pass filter
@@ -1494,7 +1495,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 				}
 
 				abort_landing(true);
-				mavlink_log_critical(&_mavlink_log_pub, "Missed LAND");
+				mavlink_log_info(&_mavlink_log_pub, "Missed LAND");
 			}
 
 			// Adjust the slope position at rangefinder activation so that we avoid diving if we should be lower than we are
@@ -1515,7 +1516,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 
 					// inform about this movement
 
-					mavlink_log_critical(&_mavlink_log_pub, "TD moved %d", (int)_land_touchdown_point_shift);
+					mavlink_log_info(&_mavlink_log_pub, "LAND moved %d", (int)_land_touchdown_point_shift);
 
 					//Check if the slope shift was too much at this point
 					if (_land_touchdown_point_shift > _param_fw_lnd_max_mv.get()) {
@@ -1553,8 +1554,6 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 		}
 
 		const float airspeed_approach = _param_fw_lnd_airspd_sc.get() * _airspeed_min_adj;
-
-		_tecs.set_pos_ctrl_hgt_rate(false);
 
 		_tecs.set_pos_ctrl_hgt_rate(false);
 
@@ -1769,7 +1768,7 @@ FixedwingPositionControl::reset_landing_state()
 
 		_time_started_landing = 0;
 
-		mavlink_log_critical(&_mavlink_log_pub, "terr alt offs x10 %d", (int)(_land_terrain_alt_offset *10));
+		mavlink_log_info(&_mavlink_log_pub, "terr alt offs x10 %d", (int)(_land_terrain_alt_offset *10));
 	}
 
 	_tecs.set_pos_ctrl_hgt_rate(false);
