@@ -1382,22 +1382,6 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 			_t_alt_prev_valid = terrain_alt;
 			_time_last_t_alt = hrt_absolute_time();
 
-			// update the terrain altitude offset to the correct level (to be used on the next landing attempt)
-			// by checking that we are on slope or flaring we make sure that we are at least somewhat close to the landing point
-			if (_land_onslope || _land_noreturn_vertical) {
-				// there has not been a valid estimate in a long time -> take it straight away
-				if (_time_last_t_alt == 0) {
-					_land_terrain_alt_offset = terrain_alt - (pos_sp_curr.alt - _land_terrain_alt_offset_prev);
-
-				} else {
-					// use a low pass filter
-					_land_terrain_alt_offset = 0.05f * (terrain_alt - (pos_sp_curr.alt - _land_terrain_alt_offset_prev)) +
-								   0.95f * _land_terrain_alt_offset;
-				}
-			}
-
-
-
 		} else if (_time_last_t_alt == 0) {
 			// we have started landing phase but don't have valid terrain
 			// wait for some time, maybe we will soon get a valid estimate
