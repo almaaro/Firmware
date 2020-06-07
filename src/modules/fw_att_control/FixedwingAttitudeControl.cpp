@@ -598,7 +598,7 @@ void FixedwingAttitudeControl::Run()
 
 					// The elevator has a different scaler
 					control_input.scaler = _airspeed_scaling_elevator;
-					float pitch_u = _pitch_ctrl.control_bodyrate(control_input);
+					float pitch_u = _pitch_ctrl.control_euler_rate(control_input);
 					_actuators.control[actuator_controls_s::INDEX_PITCH] = (PX4_ISFINITE(pitch_u)) ? pitch_u + trim_pitch : trim_pitch;
 					control_input.scaler = _airspeed_scaling;
 
