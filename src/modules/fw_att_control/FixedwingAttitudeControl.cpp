@@ -530,15 +530,15 @@ void FixedwingAttitudeControl::Run()
 			//Flaps trims. If as_land is very close to as_min, don't use it.
 			if(_actuators.control[actuator_controls_s::INDEX_THROTTLE] > _param_fw_thr_cruise.get()){
 				if (airspeed >_param_fw_airspd_min.get() || as_diff_min_land < 1.0f){
-					trim_pitch_flaps = find_trim_from_4_coordinates(thr_ratio_hi, as_ratio_lo, _param_trm_pf_vc_tc.get(), _param_trm_pf_vh_tc.get(), _param_trm_pf_vc_th.get(), _param_trm_pf_vh_th.get());
+					trim_pitch_flaps = find_trim_from_4_coordinates(thr_ratio_hi, as_ratio_lo, _param_trm_pf_vm_tc.get(), _param_trm_pf_vc_tc.get(), _param_trm_pf_vm_th.get(), _param_trm_pf_vc_th.get());
 				}else {
-					trim_pitch_flaps = find_trim_from_4_coordinates(thr_ratio_hi, as_ratio_land, _param_trm_pf_vm_tc.get(), _param_trm_pf_vc_tc.get(), _param_trm_pf_vm_th.get(), _param_trm_pf_vc_th.get());
+					trim_pitch_flaps = find_trim_from_4_coordinates(thr_ratio_hi, as_ratio_land, _param_trm_pf_vl_tc.get(), _param_trm_pf_vm_tc.get(), _param_trm_pf_vl_th.get(), _param_trm_pf_vm_th.get());
 				}
 			} else{
 				if (airspeed > _param_fw_airspd_min.get() || as_diff_min_land < 1.0f){
-					trim_pitch_flaps = find_trim_from_4_coordinates(thr_ratio_lo, as_ratio_lo, _param_trm_pf_vc_tm.get(), _param_trm_pf_vh_tm.get(), _param_trm_pf_vc_tc.get(), _param_trm_pf_vh_tc.get());
+					trim_pitch_flaps = find_trim_from_4_coordinates(thr_ratio_lo, as_ratio_lo, _param_trm_pf_vm_tm.get(), _param_trm_pf_vc_tm.get(), _param_trm_pf_vm_tc.get(), _param_trm_pf_vc_tc.get());
 				}else {
-					trim_pitch_flaps = find_trim_from_4_coordinates(thr_ratio_lo, as_ratio_land, _param_trm_pf_vm_tm.get(), _param_trm_pf_vc_tm.get(), _param_trm_pf_vm_tc.get(), _param_trm_pf_vc_tc.get());
+					trim_pitch_flaps = find_trim_from_4_coordinates(thr_ratio_lo, as_ratio_land, _param_trm_pf_vl_tm.get(), _param_trm_pf_vm_tm.get(), _param_trm_pf_vl_tc.get(), _param_trm_pf_vm_tc.get());
 				}
 			}
 
