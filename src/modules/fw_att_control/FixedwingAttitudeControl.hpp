@@ -143,11 +143,6 @@ private:
 
 	bool _is_tailsitter{false};
 
-	//The charasteristic pitch trim moments at different airspeeds, used for pitch trim scaling.
-	float _pitch_trim_moment_slope_low{0.0f};
-	float _pitch_trim_moment_vtrim{0.0f};
-	float _pitch_trim_moment_slope_high{0.0f};
-
 	bool _motor_airstream_valid{false};
 
 	DEFINE_PARAMETERS(
@@ -223,6 +218,29 @@ private:
 		(ParamFloat<px4::params::TRIM_ROLL>) _param_trim_roll,
 		(ParamFloat<px4::params::TRIM_YAW>) _param_trim_yaw,
 
+		(ParamFloat<px4::params::FW_TRM_P_VM_TM>) _param_trm_p_vm_tm,
+		(ParamFloat<px4::params::FW_TRM_P_VM_TC>) _param_trm_p_vm_tc,
+		(ParamFloat<px4::params::FW_TRM_P_VM_TH>) _param_trm_p_vm_th,
+		(ParamFloat<px4::params::FW_TRM_P_VC_TM>) _param_trm_p_vc_tm,
+		(ParamFloat<px4::params::FW_TRM_P_VC_TC>) _param_trm_p_vc_tc,
+		(ParamFloat<px4::params::FW_TRM_P_VC_TH>) _param_trm_p_vc_th,
+		(ParamFloat<px4::params::FW_TRM_P_VH_TM>) _param_trm_p_vh_tm,
+		(ParamFloat<px4::params::FW_TRM_P_VH_TC>) _param_trm_p_vh_tc,
+		(ParamFloat<px4::params::FW_TRM_P_VH_TH>) _param_trm_p_vh_th,
+		(ParamFloat<px4::params::FW_TRM_PF_VL_TM>) _param_trm_pf_vl_tm,
+		(ParamFloat<px4::params::FW_TRM_PF_VL_TC>) _param_trm_pf_vl_tc,
+		(ParamFloat<px4::params::FW_TRM_PF_VL_TH>) _param_trm_pf_vl_th,
+		(ParamFloat<px4::params::FW_TRM_PF_VM_TM>) _param_trm_pf_vm_tm,
+		(ParamFloat<px4::params::FW_TRM_PF_VM_TC>) _param_trm_pf_vm_tc,
+		(ParamFloat<px4::params::FW_TRM_PF_VM_TH>) _param_trm_pf_vm_th,
+		(ParamFloat<px4::params::FW_TRM_PF_VC_TM>) _param_trm_pf_vc_tm,
+		(ParamFloat<px4::params::FW_TRM_PF_VC_TC>) _param_trm_pf_vc_tc,
+		(ParamFloat<px4::params::FW_TRM_PF_VC_TC>) _param_trm_pf_vc_th,
+
+		(ParamFloat<px4::params::FW_THR_CRUISE>) _param_fw_thr_cruise,
+		(ParamFloat<px4::params::FW_THR_MAX>) _param_fw_thr_max,
+		(ParamFloat<px4::params::FW_THR_MIN>) _param_fw_thr_min,
+
 		(ParamFloat<px4::params::FW_THR_AS_ELEV>) _param_fw_thr_as_elev
 	)
 
@@ -246,4 +264,6 @@ private:
 	void		vehicle_motor_airstream_poll();
 
 	float 		get_airspeed_and_update_scaling();
+
+	float		find_trim_from_4_coordinates(float thr_ratio, float as_ratio, float trim_lo_as_lo_thr, float trim_hi_as_lo_thr, float trim_lo_as_hi_thr, float trim_hi_as_hi_thr);
 };

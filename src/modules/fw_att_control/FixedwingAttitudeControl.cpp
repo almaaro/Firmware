@@ -241,25 +241,6 @@ FixedwingAttitudeControl::vehicle_motor_airstream_poll()
 
 			_motor_airstream_valid = true;
 
-			/* pitch trim calculations */
-			_pitch_trim_moment_vtrim = _param_trim_pitch.get() * _vehicle_motor_airstream.as_elev_trim_as_level_sq;
-
-			if (_param_fw_airspd_trim.get() > _param_fw_airspd_min.get() + 0.5f) {
-				_pitch_trim_moment_slope_low = (_pitch_trim_moment_vtrim - (_param_fw_dtrim_p_vmin.get() + _param_trim_pitch.get()) *
-								_param_fw_airspd_min.get() * _param_fw_airspd_min.get()) / (_param_fw_airspd_trim.get() - _param_fw_airspd_min.get());
-
-			} else {
-				_pitch_trim_moment_slope_low = 0;
-			}
-
-			if (_param_fw_airspd_trim.get() < _param_fw_airspd_max.get() - 0.5f) {
-				_pitch_trim_moment_slope_high = (_pitch_trim_moment_vtrim - (_param_fw_dtrim_p_vmax.get() + _param_trim_pitch.get()) *
-								 _vehicle_motor_airstream.as_elev_max_as_level_sq) / (_param_fw_airspd_trim.get() - _param_fw_airspd_max.get());
-
-			} else {
-				_pitch_trim_moment_slope_high = 0;
-			}
-
 		} else {
 			_motor_airstream_valid = false;
 		}
@@ -522,33 +503,54 @@ void FixedwingAttitudeControl::Run()
 			/* bi-linear interpolation over airspeed for actuator trim scheduling */
 			float trim_roll = _param_trim_roll.get();
 			float trim_pitch = _param_trim_pitch.get();
+			float trim_pitch_flaps = trim_pitch;
 			float trim_yaw = _param_trim_yaw.get();
 
+			float as_land = _param_fw_airspd_min_flps.get() * _param_fw_lnd_airspd_sc.get();
+			float as_diff_max_trim = max(_param_fw_airspd_max.get()-_param_fw_airspd_trim.get(), 1.0f);
+			float as_diff_trim_min = max(_param_fw_airspd_trim.get()-_param_fw_airspd_min.get(), 1.0f);
+			float as_diff_min_land = max(_param_fw_airspd_min.get()-as_land, 0.5f);
+			float thr_ratio_lo = constrain((_actuators.control[actuator_controls_s::INDEX_THROTTLE]-_param_fw_thr_min.get())/(_param_fw_thr_cruise.get()-_param_fw_thr_min.get()), 0.0f, 1.0f);
+			float thr_ratio_hi = constrain((_actuators.control[actuator_controls_s::INDEX_THROTTLE]-_param_fw_thr_cruise.get())/(_param_fw_thr_max.get()-_param_fw_thr_cruise.get()), 0.0f, 1.0f);
+			float as_ratio_lo = constrain((airspeed -_param_fw_airspd_min.get())/as_diff_trim_min, 0.0f, 1.0f);
+			float as_ratio_hi = constrain((airspeed -_param_fw_airspd_trim.get())/as_diff_max_trim, 0.0f, 1.0f);
+			float as_ratio_land = constrain((airspeed-as_land)/as_diff_min_land, 0.0f, 1.0f);
 
-			/* Calculating the pitch trim based on the required moment and airstream scaling.
-			 *
-			 * We know that the pitching moment changes depending on airspeed (and alpha, but assuming that alpha is constant
-			 * at a given airspeed at cruise flight.). We also know that the elevtor pitching moment is proportional to the
-			 * square of the airstream velocity hitting the elevtor. Now we can calculate the required charasteristic pitching moments at
-			 * given airspeeds. (M = k * _pitch_trim * (airstream velocity)^2 where k can remain unknown assuming that the air density remains
-			 * constant).
-			 *
-			 * Here we first calculate the required charasteristic pitching moment for the airspeed by interpolating. Then we get the pitch trim increment by dividing
-			 * it with the square of the speed of the airstream hitting the elevator.
-			 *
-			 * The airstream velocity is calculated by V2 = airspeed + motor_delta_V * scaler
-			 */
-			float req_pitch_moment = _pitch_trim_moment_vtrim;
-			float airstream_velocity_elevator = math::max(_param_fw_airspd_min.get(), _vehicle_motor_airstream.required_as_elev);
+			//Clean flight config trims
+			if(_actuators.control[actuator_controls_s::INDEX_THROTTLE] > _param_fw_thr_cruise.get()){
+				if (airspeed > _param_fw_airspd_trim.get()){
+					trim_pitch = find_trim_from_4_coordinates(thr_ratio_hi, as_ratio_hi, _param_trm_p_vc_tc.get(), _param_trm_p_vh_tc.get(), _param_trm_p_vc_th.get(), _param_trm_p_vh_th.get());
+				}else {
+					trim_pitch = find_trim_from_4_coordinates(thr_ratio_hi, as_ratio_lo, _param_trm_p_vm_tc.get(), _param_trm_p_vc_tc.get(), _param_trm_p_vm_th.get(), _param_trm_p_vc_th.get());
+				}
+			} else{
+				if (airspeed > _param_fw_airspd_trim.get()){
+					trim_pitch = find_trim_from_4_coordinates(thr_ratio_lo, as_ratio_hi, _param_trm_p_vc_tm.get(), _param_trm_p_vh_tm.get(), _param_trm_p_vc_tc.get(), _param_trm_p_vh_tc.get());
+				}else {
+					trim_pitch = find_trim_from_4_coordinates(thr_ratio_lo, as_ratio_lo, _param_trm_p_vm_tm.get(), _param_trm_p_vc_tm.get(), _param_trm_p_vm_tc.get(), _param_trm_p_vc_tc.get());
+				}
+			}
+
+			//Flaps trims. If as_land is very close to as_min, don't use it.
+			if(_actuators.control[actuator_controls_s::INDEX_THROTTLE] > _param_fw_thr_cruise.get()){
+				if (airspeed >_param_fw_airspd_min.get() || as_diff_min_land < 1.0f){
+					trim_pitch_flaps = find_trim_from_4_coordinates(thr_ratio_hi, as_ratio_lo, _param_trm_pf_vc_tc.get(), _param_trm_pf_vh_tc.get(), _param_trm_pf_vc_th.get(), _param_trm_pf_vh_th.get());
+				}else {
+					trim_pitch_flaps = find_trim_from_4_coordinates(thr_ratio_hi, as_ratio_land, _param_trm_pf_vm_tc.get(), _param_trm_pf_vc_tc.get(), _param_trm_pf_vm_th.get(), _param_trm_pf_vc_th.get());
+				}
+			} else{
+				if (airspeed > _param_fw_airspd_min.get() || as_diff_min_land < 1.0f){
+					trim_pitch_flaps = find_trim_from_4_coordinates(thr_ratio_lo, as_ratio_lo, _param_trm_pf_vc_tm.get(), _param_trm_pf_vh_tm.get(), _param_trm_pf_vc_tc.get(), _param_trm_pf_vh_tc.get());
+				}else {
+					trim_pitch_flaps = find_trim_from_4_coordinates(thr_ratio_lo, as_ratio_land, _param_trm_pf_vm_tm.get(), _param_trm_pf_vc_tm.get(), _param_trm_pf_vm_tc.get(), _param_trm_pf_vc_tc.get());
+				}
+			}
 
 			if (airspeed < _param_fw_airspd_trim.get()) {
 				trim_roll += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(),
 							   _param_fw_dtrim_r_vmin.get(),
 							   0.0f);
-				req_pitch_moment += (airspeed - _param_fw_airspd_trim.get()) * _pitch_trim_moment_slope_low;
-				trim_pitch += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(),
-							    _param_fw_dtrim_p_vmin.get(),
-							    0.0f);
+
 				trim_yaw += math::gradual(airspeed, _param_fw_airspd_min.get(), _param_fw_airspd_trim.get(),
 							  _param_fw_dtrim_y_vmin.get(),
 							  0.0f);
@@ -556,20 +558,13 @@ void FixedwingAttitudeControl::Run()
 			} else {
 				trim_roll += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
 							   _param_fw_dtrim_r_vmax.get());
-				req_pitch_moment += (airspeed - _param_fw_airspd_trim.get()) * _pitch_trim_moment_slope_high;
-				trim_pitch += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
-							    _param_fw_dtrim_p_vmax.get());
 				trim_yaw += math::gradual(airspeed, _param_fw_airspd_trim.get(), _param_fw_airspd_max.get(), 0.0f,
 							  _param_fw_dtrim_y_vmax.get());
 			}
 
-			if (_motor_airstream_valid) {
-				trim_pitch = req_pitch_moment / (airstream_velocity_elevator * airstream_velocity_elevator);
-			}
-
 			/* add trim increment if flaps are deployed  */
 			trim_roll += _flaps_applied * _param_fw_dtrim_r_flps.get();
-			trim_pitch += _flaps_applied * _param_fw_dtrim_p_flps.get();
+			trim_pitch = (1.0f -_flaps_applied) * trim_pitch + _flaps_applied * trim_pitch_flaps;
 
 			/* Run attitude controllers */
 			if (_vcontrol_mode.flag_control_attitude_enabled) {
@@ -793,6 +788,33 @@ void FixedwingAttitudeControl::control_flaps(const float dt)
 	} else {
 		_flaperons_applied = flaperon_control;
 	}
+}
+
+float FixedwingAttitudeControl::find_trim_from_4_coordinates(float thr_ratio, float as_ratio, float trim_lo_as_lo_thr, float trim_hi_as_lo_thr, float trim_lo_as_hi_thr, float trim_hi_as_hi_thr)
+{
+	// find average
+	float avg = (trim_lo_as_lo_thr + trim_hi_as_lo_thr + trim_lo_as_hi_thr + trim_hi_as_hi_thr) / 4.0f;
+	float trim = 0;
+
+	//find which plane to calculate
+	if (as_ratio > thr_ratio){
+		if (as_ratio < 1.0f - thr_ratio){
+			//lower
+			trim = math::find_z_from_plane(as_ratio, thr_ratio, 0,0, trim_lo_as_lo_thr, 1,0, trim_hi_as_lo_thr, 0.5f, 0.5f, avg);
+		} else{
+			//right
+			trim = math::find_z_from_plane(as_ratio, thr_ratio, 1,0, trim_hi_as_lo_thr, 1,1, trim_hi_as_hi_thr, 0.5f, 0.5f, avg);
+		}
+	} else {
+		if (thr_ratio < 1.0f - as_ratio){
+			//left
+			trim = math::find_z_from_plane(as_ratio, thr_ratio, 0,0, trim_lo_as_lo_thr, 0,1, trim_lo_as_hi_thr, 0.5f, 0.5f, avg);
+		} else{
+			//upper
+			trim = math::find_z_from_plane(as_ratio, thr_ratio, 1,1, trim_hi_as_hi_thr, 0,1, trim_lo_as_hi_thr, 0.5f, 0.5f, avg);
+		}
+	}
+	return trim;
 }
 
 int FixedwingAttitudeControl::task_spawn(int argc, char *argv[])

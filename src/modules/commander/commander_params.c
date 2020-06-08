@@ -64,7 +64,9 @@ PARAM_DEFINE_FLOAT(TRIM_ROLL, 0.0f);
  * for straight and level flight. It can be calibrated by
  * flying manually straight and level using the RC trims and
  * copying them using the GCS.
- * Should be measured with throttle set to FW_THR_CRUISE.
+ * Should be measured with throttle set to FW_THR_CRUISE. The elevator
+ * control surface should be set set so that the elevator will produce
+ * zero pitching moment when TRIM_PITCH is zero.
  *
  * @group Radio Calibration
  * @min -0.25
