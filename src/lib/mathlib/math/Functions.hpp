@@ -147,4 +147,25 @@ const T gradual(const T &value, const T &x_low, const T &x_high, const T &y_low,
 	}
 }
 
+// Function to find z-coordinate of point (x,y) on a plane that is defined by 3 other points.
+template<typename T>
+const T z_from_new_plane(const T &x, const T &y, const T &x1, const T &y1,
+					const T &z1, const T &x2,
+					const T &y2, const T &z2,
+					const T &x3, const T &y3, const T &z3)
+{
+	float a1 = x2 - x1;
+	float b1 = y2 - y1;
+	float c1 = z2 - z1;
+	float a2 = x3 - x1;
+	float b2 = y3 - y1;
+	float c2 = z3 - z1;
+	float a = b1 * c2 - b2 * c1;
+	float b = a2 * c1 - a1 * c2;
+	float c = a1 * b2 - b1 * a2;
+	float d = (- a * x1 - b * y1 - c * z1);
+
+	return - (a*x + b*y + d) / c;
+}
+
 } /* namespace math */

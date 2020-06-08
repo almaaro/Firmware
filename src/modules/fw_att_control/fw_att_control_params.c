@@ -760,7 +760,7 @@ PARAM_DEFINE_FLOAT(FW_DTRIM_R_FLPS, 0.0f);
  * Pitch trim increment for flaps configuration
  *
  * This increment is added to the pitch trim whenever flaps are fully deployed.
- * Should be measured with landing configuration throttle and airspeed.
+ * Should be measured with cruise throttle and minimum airspeed
  *
  * @group FW Attitude Control
  * @min -0.25
@@ -786,3 +786,219 @@ PARAM_DEFINE_FLOAT(FW_DTRIM_P_FLPS, 0.0f);
  * @increment 0.01
  */
 PARAM_DEFINE_FLOAT(FW_THR_AS_ELEV, 0.0f);
+
+/**
+ * Pitch trim at min as, min thr
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_P_VM_TM, 0.0f);
+
+/**
+ * Pitch trim at min as, cruise thr
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_P_VM_TC, 0.0f);
+
+/**
+ * Pitch trim at min as, max thr
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_P_VM_TH, 0.0f);
+
+/**
+ * Pitch trim at cruise as, min thr
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_P_VC_TM, 0.0f);
+
+/**
+ * Pitch trim atcruise as, cruise thr
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_P_VC_TC, 0.0f);
+
+/**
+ * Pitch trim at cruise as, max thr
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_P_VC_TH, 0.0f);
+
+/**
+ * Pitch trim at max as, min thr
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_P_VH_TM, 0.0f);
+
+/**
+ * Pitch trim at max as, cruise thr
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_P_VH_TC, 0.0f);
+
+/**
+ * Pitch trim at max as, max thr
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_P_VH_TH, 0.0f);
+
+/**
+ * Pitch trim at land as, min thr, flaps deployed
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_PF_VL_TM, 0.0f);
+
+/**
+ * Pitch trim at land as, cruise thr, flaps deployed
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_PF_VL_TC, 0.0f);
+
+/**
+ * Pitch trim at land as, max thr, flaps deployed
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_PF_VL_TH, 0.0f);
+
+/**
+ * Pitch trim at min as, min thr, flaps deployed
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_PF_VM_TM, 0.0f);
+
+/**
+ * Pitch trim at min as, cruise thr, flaps deployed
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_PF_VM_TC, 0.0f);
+
+/**
+ * Pitch trim at min as, max thr, flaps deployed
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_PF_VM_TH, 0.0f);
+
+/**
+ * Pitch trim at cruise as, min thr, flaps deployed
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_PF_VC_TM, 0.0f);
+
+/**
+ * Pitch trim at cruise as, cruise thr, flaps deployed
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_PF_VC_TC, 0.0f);
+
+/**
+ * Pitch trim at cruise as, max thr, flaps deployed
+ *
+ *
+ * @group FW Attitude Control
+ * @min -0.25
+ * @max 0.25
+ * @decimal 2
+ * @increment 0.01
+ */
+PARAM_DEFINE_FLOAT(FW_TRM_PF_VC_TH, 0.0f);
