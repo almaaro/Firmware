@@ -39,6 +39,7 @@ FixedwingPositionControl::FixedwingPositionControl(bool vtol) :
 	ModuleParams(nullptr),
 	WorkItem(MODULE_NAME, px4::wq_configurations::navigation_and_controllers),
 	_attitude_sp_pub(vtol ? ORB_ID(fw_virtual_attitude_setpoint) : ORB_ID(vehicle_attitude_setpoint)),
+	_actuators_0_sub(vtol ? ORB_ID(actuator_controls_virtual_fw) : ORB_ID(actuator_controls_0)),
 	_loop_perf(perf_alloc(PC_ELAPSED, MODULE_NAME": cycle")),
 	_launchDetector(this),
 	_runway_takeoff(this)
@@ -1548,7 +1549,7 @@ FixedwingPositionControl::Run()
 		_alt_reset_counter = _local_pos.vz_reset_counter;
 		_pos_reset_counter = _local_pos.vxy_reset_counter;
 
-		_actuators_0_sub.update(&_actuators_0);
+		_actuators_0_sub.update(&_actuators);
 		airspeed_poll();
 		_manual_control_sub.update(&_manual);
 		_pos_sp_triplet_sub.update(&_pos_sp_triplet);
@@ -1585,7 +1586,7 @@ FixedwingPositionControl::Run()
 			// add attitude setpoint offsets
 			_att_sp.roll_body += radians(_param_fw_rsp_off.get());
 
-                        _flaps_applied = _actuators_0.control[actuator_controls_s::INDEX_FLAPS];
+			_flaps_applied = _actuators.control[actuator_controls_s::INDEX_FLAPS];
 			_tecs.set_flaps_applied(_flaps_applied);
 
 			if (_control_mode.flag_control_manual_enabled) {
