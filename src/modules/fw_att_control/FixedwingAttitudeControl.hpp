@@ -231,7 +231,7 @@ private:
 		(ParamFloat<px4::params::FW_TRM_PF_VM_TH>) _param_trm_pf_vm_th,
 		(ParamFloat<px4::params::FW_TRM_PF_VC_TM>) _param_trm_pf_vc_tm,
 		(ParamFloat<px4::params::FW_TRM_PF_VC_TC>) _param_trm_pf_vc_tc,
-		(ParamFloat<px4::params::FW_TRM_PF_VC_TC>) _param_trm_pf_vc_th,
+		(ParamFloat<px4::params::FW_TRM_PF_VC_TH>) _param_trm_pf_vc_th,
 
 		(ParamFloat<px4::params::FW_THR_CRUISE>) _param_fw_thr_cruise,
 		(ParamFloat<px4::params::FW_THR_MAX>) _param_fw_thr_max,
