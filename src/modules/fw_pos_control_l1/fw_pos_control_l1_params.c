@@ -844,7 +844,6 @@ PARAM_DEFINE_FLOAT(FW_T_SRATE_P, 0.02f);
 PARAM_DEFINE_FLOAT(FW_GND_SPD_MIN, 5.0f);
 
 /**
-<<<<<<< HEAD
  * Wingspan
  *
  * Used for induced drag coefficient calculation.
@@ -859,16 +858,10 @@ PARAM_DEFINE_FLOAT(FW_GND_SPD_MIN, 5.0f);
 PARAM_DEFINE_FLOAT(FW_T_WINGSPAN, 1.0f);
 
 /**
-=======
->>>>>>> flaps-as-pitch-offset-and-drag
  * The slope between angle of attack and the coefficient of lift.
  * Calculated from the wing airfoil's Alpha v Cl polar as
  * FW_T_ALPHA_V_CL = (delta Alpha)/(delta Cl)
  *
-<<<<<<< HEAD
-=======
- * @unit deg
->>>>>>> flaps-as-pitch-offset-and-drag
  * @min 0.0
  * @max 30.0
  * @decimal 2
@@ -878,7 +871,6 @@ PARAM_DEFINE_FLOAT(FW_T_WINGSPAN, 1.0f);
 PARAM_DEFINE_FLOAT(FW_T_CL_ALPHA, 0.0f);
 
 /**
-<<<<<<< HEAD
  * Plane all up weight
  *
  * Used for induced drag coefficient and throttle setting calculation.
@@ -893,8 +885,6 @@ PARAM_DEFINE_FLOAT(FW_T_CL_ALPHA, 0.0f);
 PARAM_DEFINE_FLOAT(FW_T_AUW, 1.0f);
 
 /**
-=======
->>>>>>> flaps-as-pitch-offset-and-drag
  * The wing area in square meters.
  *
  * @unit m^2
@@ -905,7 +895,7 @@ PARAM_DEFINE_FLOAT(FW_T_AUW, 1.0f);
  * @group FW TECS
  */
 PARAM_DEFINE_FLOAT(FW_T_WING_AREA, 0.0f);
-<<<<<<< HEAD
+
 
 /**
  * Propeller (or fan) diameter in meters.
@@ -936,5 +926,3 @@ PARAM_DEFINE_FLOAT(FW_T_PROP_DIA, 0.2f);
  * @group FW TECS
  */
 PARAM_DEFINE_INT32(FW_T_ADV_THR, 0);
-=======
->>>>>>> flaps-as-pitch-offset-and-drag
