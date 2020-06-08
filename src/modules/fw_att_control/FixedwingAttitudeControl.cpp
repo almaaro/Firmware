@@ -800,18 +800,18 @@ float FixedwingAttitudeControl::find_trim_from_4_coordinates(float thr_ratio, fl
 	if (as_ratio > thr_ratio){
 		if (as_ratio < 1.0f - thr_ratio){
 			//lower
-			trim = math::find_z_from_plane(as_ratio, thr_ratio, 0,0, trim_lo_as_lo_thr, 1,0, trim_hi_as_lo_thr, 0.5f, 0.5f, avg);
+			trim = math::find_z_from_new_plane(as_ratio, thr_ratio, 0.0f,0.0f, trim_lo_as_lo_thr, 1.0f,0.0f, trim_hi_as_lo_thr, 0.5f, 0.5f, avg);
 		} else{
 			//right
-			trim = math::find_z_from_plane(as_ratio, thr_ratio, 1,0, trim_hi_as_lo_thr, 1,1, trim_hi_as_hi_thr, 0.5f, 0.5f, avg);
+			trim = math::find_z_from_new_plane(as_ratio, thr_ratio, 1.0f,0.0f, trim_hi_as_lo_thr, 1.0f,1.0f, trim_hi_as_hi_thr, 0.5f, 0.5f, avg);
 		}
 	} else {
 		if (thr_ratio < 1.0f - as_ratio){
 			//left
-			trim = math::find_z_from_plane(as_ratio, thr_ratio, 0,0, trim_lo_as_lo_thr, 0,1, trim_lo_as_hi_thr, 0.5f, 0.5f, avg);
+			trim = math::find_z_from_new_plane(as_ratio, thr_ratio, 0.0f,0.0f, trim_lo_as_lo_thr, 0.0f,1.0f, trim_lo_as_hi_thr, 0.5f, 0.5f, avg);
 		} else{
 			//upper
-			trim = math::find_z_from_plane(as_ratio, thr_ratio, 1,1, trim_hi_as_hi_thr, 0,1, trim_lo_as_hi_thr, 0.5f, 0.5f, avg);
+			trim = math::find_z_from_new_plane(as_ratio, thr_ratio, 1.0f,1.0f, trim_hi_as_hi_thr, 0.0f,1.0f, trim_lo_as_hi_thr, 0.5f, 0.5f, avg);
 		}
 	}
 	return trim;
