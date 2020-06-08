@@ -503,9 +503,9 @@ void FixedwingAttitudeControl::Run()
 			float trim_yaw = _param_trim_yaw.get();
 
 			float as_land = _param_fw_airspd_min_flps.get() * _param_fw_lnd_airspd_sc.get();
-			float as_diff_max_trim = max(_param_fw_airspd_max.get()-_param_fw_airspd_trim.get(), 1.0f);
-			float as_diff_trim_min = max(_param_fw_airspd_trim.get()-_param_fw_airspd_min.get(), 1.0f);
-			float as_diff_min_land = max(_param_fw_airspd_min.get()-as_land, 0.5f);
+			float as_diff_max_trim = math::max(_param_fw_airspd_max.get()-_param_fw_airspd_trim.get(), 1.0f);
+			float as_diff_trim_min = math::max(_param_fw_airspd_trim.get()-_param_fw_airspd_min.get(), 1.0f);
+			float as_diff_min_land = math::max(_param_fw_airspd_min.get()-as_land, 0.5f);
 			float thr_ratio_lo = constrain((_actuators.control[actuator_controls_s::INDEX_THROTTLE]-_param_fw_thr_min.get())/(_param_fw_thr_cruise.get()-_param_fw_thr_min.get()), 0.0f, 1.0f);
 			float thr_ratio_hi = constrain((_actuators.control[actuator_controls_s::INDEX_THROTTLE]-_param_fw_thr_cruise.get())/(_param_fw_thr_max.get()-_param_fw_thr_cruise.get()), 0.0f, 1.0f);
 			float as_ratio_lo = constrain((airspeed -_param_fw_airspd_min.get())/as_diff_trim_min, 0.0f, 1.0f);
