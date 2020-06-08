@@ -151,7 +151,7 @@ private:
 
 	uORB::SubscriptionCallbackWorkItem _local_pos_sub{this, ORB_ID(vehicle_local_position)};
 
-	uORB::Subscription _actuators_0_sub{ORB_ID(actuator_controls)};                 ///< actuator controls
+	uORB::Subscription _actuators_0_sub;                 ///< actuator controls
 	uORB::Subscription _control_mode_sub{ORB_ID(vehicle_control_mode)};		///< control mode subscription
 	uORB::Subscription _global_pos_sub{ORB_ID(vehicle_global_position)};
 	uORB::Subscription _manual_control_sub{ORB_ID(manual_control_setpoint)};	///< notification of manual control updates
