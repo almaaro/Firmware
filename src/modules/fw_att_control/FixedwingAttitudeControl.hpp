@@ -237,6 +237,8 @@ private:
 		(ParamFloat<px4::params::FW_THR_MAX>) _param_fw_thr_max,
 		(ParamFloat<px4::params::FW_THR_MIN>) _param_fw_thr_min,
 
+		(ParamFloat<px4::params::FW_LND_AIRSPD_SC>) _param_fw_lnd_airspd_sc,
+
 		(ParamFloat<px4::params::FW_THR_AS_ELEV>) _param_fw_thr_as_elev
 	)
 
