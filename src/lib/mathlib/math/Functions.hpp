@@ -149,7 +149,7 @@ const T gradual(const T &value, const T &x_low, const T &x_high, const T &y_low,
 
 // Function to find z-coordinate of point (x,y) on a plane that is defined by 3 other points.
 template<typename T>
-const T z_from_new_plane(const T &x, const T &y, const T &x1, const T &y1,
+const T find_z_from_new_plane(const T &x, const T &y, const T &x1, const T &y1,
 					const T &z1, const T &x2,
 					const T &y2, const T &z2,
 					const T &x3, const T &y3, const T &z3)
