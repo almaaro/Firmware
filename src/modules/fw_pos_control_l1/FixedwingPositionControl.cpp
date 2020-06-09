@@ -1452,7 +1452,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 					_land_touchdown_point_shift = max(0.0f, _land_touchdown_point_shift);
 
 					// inform about this movement
-					mavlink_log_info(&_mavlink_log_pub, "TD moved %d m", (int)_land_touchdown_point_shift);
+					mavlink_log_info(&_mavlink_log_pub, "LAND moved %d m", (int)_land_touchdown_point_shift);
 
 					//Check if the slope shift was too much at this point
 					if (_land_touchdown_point_shift > _param_fw_lnd_max_mv.get()) {
