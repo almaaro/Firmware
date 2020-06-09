@@ -1384,8 +1384,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 
 		// (Negative) height rate setpoint during flare. Same as the glideslope hgt rate at flare alt
 		float gs_hgt_rate = _landingslope.landing_slope_angle_rad() * ground_speed.length();
-		float flare_hgt_rate = constrain((_current_altitude - terrain_alt) / _landingslope.flare_relative_alt(), 0.0f,
-						 gs_hgt_rate);
+		float flare_hgt_rate = max((_current_altitude - terrain_alt) / _landingslope.flare_relative_alt() * gs_hgt_rate, 0.0f);
 
 		_tecs.set_pos_ctrl_hgt_rate(true, -flare_hgt_rate);
 
@@ -1433,7 +1432,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 				}
 
 				abort_landing(true);
-				mavlink_log_critical(&_mavlink_log_pub, "Missed LAND");
+				mavlink_log_info(&_mavlink_log_pub, "Missed LAND");
 			}
 
 			// Adjust the slope position at rangefinder activation so that we avoid diving if we should be lower than we are
@@ -1453,7 +1452,7 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 					_land_touchdown_point_shift = max(0.0f, _land_touchdown_point_shift);
 
 					// inform about this movement
-					mavlink_log_critical(&_mavlink_log_pub, "TD moved %d m", (int)_land_touchdown_point_shift);
+					mavlink_log_info(&_mavlink_log_pub, "TD moved %d m", (int)_land_touchdown_point_shift);
 
 					//Check if the slope shift was too much at this point
 					if (_land_touchdown_point_shift > _param_fw_lnd_max_mv.get()) {
