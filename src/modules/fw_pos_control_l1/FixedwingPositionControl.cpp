@@ -1389,7 +1389,11 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 
 		_tecs.set_pos_ctrl_hgt_rate(true, -flare_hgt_rate);
 
-		tecs_update_pitch_throttle(terrain_alt,
+		//calculate the relative alt just for the sake of logging nice data (tecs doesn't use it as _use_position_control_hgt_rate is set to true)
+		float gs_alt = terrain_alt + _landingslope.getLandingSlopeRelativeAltitude(wp_distance +
+											_land_touchdown_point_shift);
+
+		tecs_update_pitch_throttle(gs_alt,
 					   calculate_target_airspeed(airspeed_land, ground_speed),
 					   radians(_param_fw_lnd_fl_pmin.get()),
 					   radians(_param_fw_lnd_fl_pmax.get()),
@@ -1435,9 +1439,8 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 			// Adjust the slope position at rangefinder activation so that we avoid diving if we should be lower than we are
 			else if (!_land_rngfnd_bump_handled && _time_last_t_alt > 0) {
 
-				// Move the land point forward so that we seem to be at the correct altitude
-				// if the altitude error would be over FW_LND_GS_TOL of the current slope altitude setpoint
-				// and the new altitude setpoint would be under FW_LND_MV_ALT
+				// Move the land point forward so that altitude setpoint doesn't change
+				// if the new altitude setpoint would be under FW_LND_MV_ALT
 				if ((_current_altitude - terrain_alt) > landing_slope_alt_rel_desired &&
 				    landing_slope_alt_rel_desired < _param_fw_lnd_mv_alt.get()) {
 					_land_touchdown_point_shift = _landingslope.getLandingSlopeWPDistance(landing_slope_alt_rel_desired + pos_sp_curr.alt,
@@ -1445,11 +1448,12 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 								      _landingslope.horizontal_slope_displacement(),
 								      _landingslope.landing_slope_angle_rad()) - wp_distance;
 
-					// Don't move the touchdown point backwards
+					// Don't move the touchdown point backwards (might happen if we are high above the slope
+					// even if the terrain was higher than expected
 					_land_touchdown_point_shift = max(0.0f, _land_touchdown_point_shift);
 
 					// inform about this movement
-					mavlink_log_critical(&_mavlink_log_pub, "TD moved %d", (int)_land_touchdown_point_shift);
+					mavlink_log_critical(&_mavlink_log_pub, "TD moved %d m", (int)_land_touchdown_point_shift);
 
 					//Check if the slope shift was too much at this point
 					if (_land_touchdown_point_shift > _param_fw_lnd_max_mv.get()) {
@@ -1696,8 +1700,6 @@ FixedwingPositionControl::reset_landing_state()
 		_land_onslope = false;
 
 		_time_started_landing = 0;
-
-		mavlink_log_critical(&_mavlink_log_pub, "terr alt offs x10 %d", (int)(_land_terrain_alt_offset *10));
 	}
 
 	_tecs.set_pos_ctrl_hgt_rate(false);
