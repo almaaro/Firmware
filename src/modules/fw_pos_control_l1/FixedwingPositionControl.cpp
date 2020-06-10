@@ -1440,22 +1440,17 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 
 				// Move the land point forward so that altitude setpoint doesn't change
 				// if the new altitude setpoint would be under FW_LND_MV_ALT
-				if ((_current_altitude - terrain_alt) > landing_slope_alt_rel_desired &&
-				    landing_slope_alt_rel_desired < _param_fw_lnd_mv_alt.get()) {
+				if ( landing_slope_alt_rel_desired < _param_fw_lnd_mv_alt.get()) {
 					_land_touchdown_point_shift = _landingslope.getLandingSlopeWPDistance(landing_slope_alt_rel_desired + pos_sp_curr.alt,
 								      terrain_alt,
 								      _landingslope.horizontal_slope_displacement(),
 								      _landingslope.landing_slope_angle_rad()) - wp_distance;
 
-					// Don't move the touchdown point backwards (might happen if we are high above the slope
-					// even if the terrain was higher than expected
-					_land_touchdown_point_shift = max(0.0f, _land_touchdown_point_shift);
-
 					// inform about this movement
 					mavlink_log_info(&_mavlink_log_pub, "LAND moved %d m", (int)_land_touchdown_point_shift);
 
 					//Check if the slope shift was too much at this point
-					if (_land_touchdown_point_shift > _param_fw_lnd_max_mv.get()) {
+					if (_land_touchdown_point_shift > _param_fw_lnd_max_mv.get() || _land_touchdown_point_shift < - _param_fw_lnd_max_mv.get()) {
 						abort_landing(true);
 					}
 
