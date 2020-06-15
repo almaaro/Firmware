@@ -1392,7 +1392,7 @@ Mission::altitude_sp_foh_update()
 	}
 
 	/* Calculate distance to current waypoint */
-	float d_current = get_distance_to_next_waypoint(_mission_item.lat, _mission_item.lon,
+	float d_current = get_distance_to_next_waypoint(pos_sp_triplet->current.lat, pos_sp_triplet->current.lon,
 			  _navigator->get_global_position()->lat, _navigator->get_global_position()->lon);
 
 	/* Save distance to waypoint if it is the smallest ever achieved, however make sure that
