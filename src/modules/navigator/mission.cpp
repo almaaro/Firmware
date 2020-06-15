@@ -1153,11 +1153,11 @@ Mission::set_mission_items()
 	}
 
 	/* Save the distance between the current sp and our current position */
-	if (pos_sp_triplet->current.valid) {
+	if (pos_sp_triplet->current.valid && pos_sp_triplet->previous.valid) {
 
 		_distance_current_previous = get_distance_to_next_waypoint(
-						     pos_sp_triplet->current.lat, pos_sp_triplet->current.lon,
-						     _navigator->get_global_position()->lat, _navigator->get_global_position()->lon);
+						 pos_sp_triplet->current.lat, pos_sp_triplet->current.lon,
+						 _navigator->get_global_position()->lat, _navigator->get_global_position()->lon);
 	}
 
 	_navigator->set_position_setpoint_triplet_updated();
@@ -1380,7 +1380,7 @@ Mission::altitude_sp_foh_update()
 		acc_rad = _navigator->get_acceptance_radius(fabsf(_mission_item.loiter_radius) * 1.2f);
 	}
 
-	/* Do not try to find a solution if the last waypoint is inside the acceptance radius of the current one */
+	/* Do not try to find a solution if the last waypoint is close to the acceptance radius of the current one */
 	if (_distance_current_previous - acc_rad < FLT_EPSILON) {
 		return;
 	}
