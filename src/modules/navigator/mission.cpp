@@ -1360,15 +1360,12 @@ Mission::altitude_sp_foh_update()
 	struct position_setpoint_triplet_s *pos_sp_triplet = _navigator->get_position_setpoint_triplet();
 
 	/* Don't change setpoint if last and current waypoint are not valid
-	 * or if the previous altitude isn't from a position or loiter setpoint or
-	 * if rotary wing since that is handled in the mc_pos_control
+	 * or if rotary wing since that is handled in the mc_pos_control
 	 */
 
 
 	if (!pos_sp_triplet->previous.valid || !pos_sp_triplet->current.valid || !PX4_ISFINITE(pos_sp_triplet->previous.alt)
-	    || !(pos_sp_triplet->previous.type == position_setpoint_s::SETPOINT_TYPE_POSITION ||
-		 pos_sp_triplet->previous.type == position_setpoint_s::SETPOINT_TYPE_LOITER) ||
-	    _navigator->get_vstatus()->vehicle_type == vehicle_status_s::VEHICLE_TYPE_ROTARY_WING) {
+		|| _navigator->get_vstatus()->vehicle_type == vehicle_status_s::VEHICLE_TYPE_ROTARY_WING) {
 
 		return;
 	}
@@ -1378,11 +1375,6 @@ Mission::altitude_sp_foh_update()
 
 	if (pos_sp_triplet->current.type == position_setpoint_s::SETPOINT_TYPE_LOITER) {
 		acc_rad = _navigator->get_acceptance_radius(fabsf(_mission_item.loiter_radius) * 1.2f);
-	}
-
-	/* Do not try to find a solution if the last waypoint is close to the acceptance radius of the current one */
-	if (_distance_current_previous - acc_rad < FLT_EPSILON) {
-		return;
 	}
 
 	/* Don't do FOH for non-missions, landing and takeoff waypoints, the ground may be near
