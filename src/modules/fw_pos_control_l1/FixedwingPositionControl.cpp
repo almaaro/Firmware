@@ -684,9 +684,10 @@ FixedwingPositionControl::control_position(const Vector2f &curr_pos, const Vecto
 		 * but do not restore them if going around
 		 */
 		if (pos_sp_prev.type != position_setpoint_s::SETPOINT_TYPE_LAND) {
-			_tecs.set_speed_weight(_param_fw_t_spdweight.get());
 			_tecs.set_time_const_throt(_param_fw_t_thro_const.get());
 		}
+
+		_tecs.set_speed_weight(_param_fw_t_spdweight.get());
 
 		Vector2f curr_wp{0.0f, 0.0f};
 		Vector2f prev_wp{0.0f, 0.0f};
