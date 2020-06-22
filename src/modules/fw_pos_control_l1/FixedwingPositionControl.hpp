@@ -411,6 +411,7 @@ private:
 		(ParamFloat<px4::params::FW_T_THRO_CONST>) _param_fw_t_thro_const,
 		(ParamFloat<px4::params::FW_T_TIME_CONST>) _param_fw_t_time_const,
 		(ParamFloat<px4::params::FW_T_VERT_ACC>) _param_fw_t_vert_acc,
+		(ParamFloat<px4::params::FW_T_THRO_LPF>) _param_fw_t_thro_lpf,
 
 		(ParamFloat<px4::params::FW_THR_ALT_SCL>) _param_fw_thr_alt_scl,
 		(ParamFloat<px4::params::FW_THR_CRUISE>) _param_fw_thr_cruise,
