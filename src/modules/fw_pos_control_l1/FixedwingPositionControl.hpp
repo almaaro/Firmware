@@ -224,6 +224,8 @@ private:
 	float _land_touchdown_point_shift{0.0f};		///< how much the flare / glide slope will be moved after the rangefinder bump*/
 	float _land_prev_tecs_alt_sp{0.0};			///< the latest altitude setpoint that was sent to tecs*/
 
+	bool _passed_land_start_marker{false};		///< indicates whether LAND_START waypoint has been passed
+
 	/* Values for adjusting the landing altitude */
 	float _land_terrain_alt_offset_prev{0.0f};			///< offset that will be added to _pos_sp_curr_alt_unadjusted */
 	float _land_terrain_alt_offset{0.0f};		///< temporary value for storing the offset while in the landing phase */
@@ -399,6 +401,7 @@ private:
 		(ParamFloat<px4::params::FW_T_CLMB_MAX>) _param_fw_t_clmb_max,
 		(ParamFloat<px4::params::FW_T_HRATE_FF>) _param_fw_t_hrate_ff,
 		(ParamFloat<px4::params::FW_T_HRATE_P>) _param_fw_t_hrate_p,
+		(ParamFloat<px4::params::FW_T_HRATE_P_LND>) _param_fw_t_hrate_p_lnd,
 		(ParamFloat<px4::params::FW_T_INTEG_GAIN>) _param_fw_t_integ_gain,
 		(ParamFloat<px4::params::FW_T_PTCH_DAMP>) _param_fw_t_ptch_damp,
 		(ParamFloat<px4::params::FW_T_RLL2THR>) _param_fw_t_rll2thr,
@@ -407,6 +410,7 @@ private:
 		(ParamFloat<px4::params::FW_T_SPD_OMEGA>) _param_fw_t_spd_omega,
 		(ParamFloat<px4::params::FW_T_SPDWEIGHT>) _param_fw_t_spdweight,
 		(ParamFloat<px4::params::FW_T_SRATE_P>) _param_fw_t_srate_p,
+		(ParamFloat<px4::params::FW_T_SRATE_P_LND>) _param_fw_t_srate_p_lnd,
 		(ParamFloat<px4::params::FW_T_THR_DAMP>) _param_fw_t_thr_damp,
 		(ParamFloat<px4::params::FW_T_THRO_CONST>) _param_fw_t_thro_const,
 		(ParamFloat<px4::params::FW_T_TIME_CONST>) _param_fw_t_time_const,
