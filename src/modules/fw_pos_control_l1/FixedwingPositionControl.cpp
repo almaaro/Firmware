@@ -700,7 +700,7 @@ FixedwingPositionControl::control_position(const Vector2f &curr_pos, const Vecto
 				_tecs.set_time_const_throt(_param_fw_thrtc_sc.get() * _param_fw_t_thro_const.get());
 				_tecs.set_heightrate_p(_param_fw_t_hrate_p_lnd.get());
 				_tecs.set_speedrate_p(_param_fw_t_srate_p_lnd.get());
-				mission_airspeed = _param_fw_lnd_airspd_sc.get() * _param_fw_airspd_min.get();
+				mission_airspeed = _param_fw_lnd_airspd_sc.get() * _airspeed_min_adj;
 				_att_sp.apply_flaps = true;
 			}
 
@@ -741,7 +741,7 @@ FixedwingPositionControl::control_position(const Vector2f &curr_pos, const Vecto
 				_tecs.set_time_const_throt(_param_fw_thrtc_sc.get() * _param_fw_t_thro_const.get());
 				_tecs.set_heightrate_p(_param_fw_t_hrate_p_lnd.get());
 				_tecs.set_speedrate_p(_param_fw_t_srate_p_lnd.get());
-				mission_airspeed = _param_fw_lnd_airspd_sc.get() * _param_fw_airspd_min.get();
+				mission_airspeed = _param_fw_lnd_airspd_sc.get() * _airspeed_min_adj;
 				_att_sp.apply_flaps = true;
 			}
 
