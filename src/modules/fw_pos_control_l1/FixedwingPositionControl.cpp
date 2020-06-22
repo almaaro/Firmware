@@ -689,6 +689,9 @@ FixedwingPositionControl::control_position(const Vector2f &curr_pos, const Vecto
 		}
 
 		_tecs.set_speed_weight(_param_fw_t_spdweight.get());
+		_tecs.set_time_const_throt(_param_fw_t_thro_const.get());
+		_tecs.set_heightrate_p(_param_fw_t_hrate_p.get());
+		_tecs.set_speedrate_p(_param_fw_t_srate_p.get());
 
 		Vector2f curr_wp{0.0f, 0.0f};
 		Vector2f prev_wp{0.0f, 0.0f};
@@ -763,6 +766,15 @@ FixedwingPositionControl::control_position(const Vector2f &curr_pos, const Vecto
 			_att_sp.roll_body = _l1_control.get_roll_setpoint();
 			_att_sp.yaw_body = _l1_control.nav_bearing();
 
+			if (_passed_land_start_marker && _param_fw_lnd_earlycfg.get()){
+				//we have passed the landing sequence start marker -> set landing configuration.
+				_tecs.set_time_const_throt(_param_fw_thrtc_sc.get() * _param_fw_t_thro_const.get());
+				_tecs.set_heightrate_p(_param_fw_t_hrate_p_lnd.get());
+				_tecs.set_speedrate_p(_param_fw_t_srate_p_lnd.get());
+				mission_airspeed = _param_fw_lnd_airspd_sc.get() * _param_fw_airspd_min.get();
+				_att_sp.apply_flaps = true;
+			}
+
 			tecs_update_pitch_throttle(pos_sp_curr.alt,
 						   calculate_target_airspeed(mission_airspeed, ground_speed),
 						   radians(_param_fw_p_lim_min.get()) - radians(_param_fw_psp_off.get()),
@@ -793,12 +805,14 @@ FixedwingPositionControl::control_position(const Vector2f &curr_pos, const Vecto
 			float alt_sp = pos_sp_curr.alt;
 
 			if (pos_sp_next.type == position_setpoint_s::SETPOINT_TYPE_LAND && pos_sp_next.valid
-			    && _l1_control.circle_mode() && _param_fw_lnd_earlycfg.get()) {
+				&& _l1_control.circle_mode() && _param_fw_lnd_earlycfg.get()) {
 				// We're in a loiter directly before a landing WP. Enable our landing configuration (flaps,
 				// landing airspeed and potentially tighter throttle control) already such that we don't
 				// have to do this switch (which can cause significant altitude errors) close to the ground.
 				_tecs.set_time_const_throt(_param_fw_thrtc_sc.get() * _param_fw_t_thro_const.get());
-				mission_airspeed = _param_fw_lnd_airspd_sc.get() * _airspeed_min_adj;
+				_tecs.set_heightrate_p(_param_fw_t_hrate_p_lnd.get());
+				_tecs.set_speedrate_p(_param_fw_t_srate_p_lnd.get());
+				mission_airspeed = _param_fw_lnd_airspd_sc.get() * _param_fw_airspd_min.get();
 				_att_sp.apply_flaps = true;
 			}
 
@@ -1279,8 +1293,10 @@ FixedwingPositionControl::control_landing(const Vector2f &curr_pos, const Vector
 	// if they have been enabled using the corresponding parameter
 	_att_sp.apply_flaps = vehicle_attitude_setpoint_s::FLAPS_LAND;
 
-	// Enable tighter throttle control for landings
+	// Enable tighter control for landings
 	_tecs.set_time_const_throt(_param_fw_thrtc_sc.get() * _param_fw_t_thro_const.get());
+	_tecs.set_heightrate_p(_param_fw_t_hrate_p_lnd.get());
+	_tecs.set_speedrate_p(_param_fw_t_srate_p_lnd.get());
 
 	// save time at which we started landing and reset abort_landing
 	if (_time_started_landing == 0) {
@@ -1608,6 +1624,9 @@ FixedwingPositionControl::handle_command()
 
 			abort_landing(true);
 		}
+	} else if (_vehicle_command.command == vehicle_command_s::VEHICLE_CMD_DO_LAND_START) {
+		// passed land start marker -> begin early landing config
+		_passed_land_start_marker = true;
 	}
 }
 
@@ -1770,6 +1789,8 @@ FixedwingPositionControl::reset_landing_state()
 		_land_noreturn_vertical = false;
 		_land_motor_lim = false;
 		_land_onslope = false;
+
+		_passed_land_start_marker = false;
 
 		_time_started_landing = 0;
 	}

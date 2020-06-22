@@ -554,7 +554,13 @@ MissionBlock::item_contains_gate(const mission_item_s &item)
 bool
 MissionBlock::item_contains_marker(const mission_item_s &item)
 {
-	return item.nav_cmd == NAV_CMD_DO_LAND_START;
+	if (item.nav_cmd == NAV_CMD_DO_LAND_START) {
+		vehicle_command_s vcmd = {};
+		vcmd.command = item.nav_cmd;
+		_navigator->publish_vehicle_cmd(&vcmd);
+		return true;
+	}
+	return false;
 }
 
 bool

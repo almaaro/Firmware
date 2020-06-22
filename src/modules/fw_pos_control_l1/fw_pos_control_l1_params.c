@@ -336,10 +336,10 @@ PARAM_DEFINE_INT32(FW_LND_USETER, 0);
  *
  * When disabled, the landing configuration (flaps, landing airspeed, etc.) is only activated
  * on the final approach to landing. When enabled, it is already activated when entering the
- * final loiter-down (loiter-to-alt) waypoint before the landing approach. This shifts the (often large)
- * altitude and airspeed errors caused by the configuration change away from the ground such that
- * these are not so critical. It also gives the controller enough time to adapt to the new
- * configuration such that the landing approach starts with a cleaner initial state.
+ * final loiter-down (loiter-to-alt) waypoint before the landing approach or after passing DO_LAND_START marker.
+ * This shifts the (often large) altitude and airspeed errors caused by the configuration change
+ * away from the ground such that these are not so critical. It also gives the controller enough time
+ * to adapt to the new configuration such that the landing approach starts with a cleaner initial state.
  *
  * @boolean
  *
@@ -821,6 +821,17 @@ PARAM_DEFINE_FLOAT(FW_T_PTCH_DAMP, 0.0f);
 PARAM_DEFINE_FLOAT(FW_T_HRATE_P, 0.05f);
 
 /**
+ * Height rate proportional factor for landing
+ *
+ * @min 0.0
+ * @max 1.0
+ * @decimal 2
+ * @increment 0.05
+ * @group FW TECS
+ */
+PARAM_DEFINE_FLOAT(FW_T_HRATE_P_LND, 0.05f);
+
+/**
  * Height rate feed forward
  *
  * @min 0.0
@@ -841,6 +852,17 @@ PARAM_DEFINE_FLOAT(FW_T_HRATE_FF, 0.8f);
  * @group FW TECS
  */
 PARAM_DEFINE_FLOAT(FW_T_SRATE_P, 0.02f);
+
+/**
+ * Speed rate P factor for landing
+ *
+ * @min 0.0
+ * @max 2.0
+ * @decimal 2
+ * @increment 0.01
+ * @group FW TECS
+ */
+PARAM_DEFINE_FLOAT(FW_T_SRATE_P_LND, 0.02f);
 
 /**
  * Minimum groundspeed
