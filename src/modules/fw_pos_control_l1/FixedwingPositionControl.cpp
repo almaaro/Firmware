@@ -689,7 +689,6 @@ FixedwingPositionControl::control_position(const Vector2f &curr_pos, const Vecto
 		}
 
 		_tecs.set_speed_weight(_param_fw_t_spdweight.get());
-		_tecs.set_time_const_throt(_param_fw_t_thro_const.get());
 		_tecs.set_heightrate_p(_param_fw_t_hrate_p.get());
 		_tecs.set_speedrate_p(_param_fw_t_srate_p.get());
 
