@@ -654,6 +654,20 @@ PARAM_DEFINE_FLOAT(FW_T_TIME_CONST, 5.0f);
 PARAM_DEFINE_FLOAT(FW_T_THRO_CONST, 8.0f);
 
 /**
+ * TECS Throttle LPF time constant
+ *
+ * The low pass filter time constant to smooth out the throttle setpoint
+ *
+ * @unit s
+ * @min 0.0
+ * @max 10.0
+ * @decimal 1
+ * @increment 0.1
+ * @group FW TECS
+ */
+PARAM_DEFINE_FLOAT(FW_T_THRO_LPF, 0.0f);
+
+/**
  * Throttle damping factor
  *
  * This is the damping gain for the throttle demand loop.

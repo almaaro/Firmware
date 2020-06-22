@@ -102,6 +102,7 @@ FixedwingPositionControl::parameters_update()
 	_tecs.set_indicated_airspeed_max(_param_fw_airspd_max.get());
 	_tecs.set_time_const_throt(_param_fw_t_time_const.get());
 	_tecs.set_time_const(_param_fw_t_thro_const.get());
+	_tecs.set_throttle_lpf_time_constant(_param_fw_t_thro_lpf.get());
 	_tecs.set_min_sink_rate(_param_fw_t_sink_min.get());
 	_tecs.set_min_sink_rate_flaps(_param_fw_t_sink_flps.get());
 	_tecs.set_throttle_damp(_param_fw_t_thr_damp.get());

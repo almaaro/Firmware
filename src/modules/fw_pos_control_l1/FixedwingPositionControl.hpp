@@ -426,6 +426,7 @@ private:
 		(ParamFloat<px4::params::FW_T_THRO_CONST>) _param_fw_t_thro_const,
 		(ParamFloat<px4::params::FW_T_TIME_CONST>) _param_fw_t_time_const,
 		(ParamFloat<px4::params::FW_T_VERT_ACC>) _param_fw_t_vert_acc,
+		(ParamFloat<px4::params::FW_T_THRO_LPF>) _param_fw_t_thro_lpf,
 		(ParamFloat<px4::params::FW_T_WINGSPAN>) _param_fw_t_wingspan,
 		(ParamFloat<px4::params::FW_T_AUW>) _param_fw_t_auw,
 		(ParamFloat<px4::params::FW_T_PROP_DIA>) _param_fw_t_prop_dia,
