@@ -469,12 +469,17 @@ void
 MissionBlock::issue_command(const mission_item_s &item)
 {
 	if (item_contains_position(item)
-	    || item_contains_gate(item)
-	    || item_contains_marker(item)) {
+		|| item_contains_gate(item)) {
 		return;
 	}
 
-	if (item.nav_cmd == NAV_CMD_DO_SET_SERVO) {
+	if (item.nav_cmd == NAV_CMD_DO_LAND_START) {
+		vehicle_command_s vcmd = {};
+		vcmd.command = item.nav_cmd;
+		_navigator->publish_vehicle_cmd(&vcmd);
+	}
+
+	else if (item.nav_cmd == NAV_CMD_DO_SET_SERVO) {
 		PX4_INFO("DO_SET_SERVO command");
 
 		// XXX: we should issue a vehicle command and handle this somewhere else
@@ -554,13 +559,7 @@ MissionBlock::item_contains_gate(const mission_item_s &item)
 bool
 MissionBlock::item_contains_marker(const mission_item_s &item)
 {
-	if (item.nav_cmd == NAV_CMD_DO_LAND_START) {
-		vehicle_command_s vcmd = {};
-		vcmd.command = item.nav_cmd;
-		_navigator->publish_vehicle_cmd(&vcmd);
-		return true;
-	}
-	return false;
+	return item.nav_cmd == NAV_CMD_DO_LAND_START;
 }
 
 bool
