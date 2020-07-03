@@ -236,26 +236,27 @@ void VehicleAirData::Run()
 		/* parameter determining the rate of change in hPa/min, variable in kPa/min */
 		const float qnh_rate = _param_sens_qnh_rate.get() * 0.1f;
 
-		/* _baro_qnh_rate_limited is a rate-limited version of p1 */
+		/* _p1_rate_limited is a rate-limited version of p1 */
 		if (_p1_rate_limited > p1 + 0.001f) {
 			_p1_rate_limited = _p1_rate_limited - baro_dt / 1000000 / 60 * qnh_rate;
 
 		} else if (_p1_rate_limited < p1 - 0.001f) {
 
-			// this happens at boot when _baro_qnh_rate_limited is 0 and p1 is for example 1013.25.
-			if (p1 - _p1_rate_limited > 50) {
-					_p1_rate_limited = p1;
-			}
+				// this happens at boot when _p1_rate_limited is 0 and p1 is for example 1013.25.
+				// note that the numbers are in kPa (1013.25 hPa is 101.325 kPa)
+				if (p1 - _p1_rate_limited > 50) {
+						_p1_rate_limited = p1;
+				}
 
 			_p1_rate_limited = _p1_rate_limited + baro_dt / 1000000 / 60 * qnh_rate;
 		}
 
 		// If the vehicle is disarmed, update the qnh immediately
-		if (_control_mode_sub.updated()) {
+		if (_vehicle_control_mode_sub.updated()) {
 
-			control_mode_s control_mode;
+			vehicle_control_mode_s control_mode;
 
-			if (_control_mode_sub.copy(&control_mode)) {
+			if (_vehicle_control_mode_sub.copy(&control_mode)) {
 
 				if (!control_mode.flag_armed) {
 					_p1_rate_limited = p1;
