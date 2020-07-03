@@ -49,7 +49,7 @@
 #include <uORB/topics/sensor_baro.h>
 #include <uORB/topics/sensor_correction.h>
 #include <uORB/topics/vehicle_air_data.h>
-#include <uORB/topics/control_mode.h>
+#include <uORB/topics/vehicle_control_mode.h>
 
 class VehicleAirData : public ModuleParams, public px4::ScheduledWorkItem
 {
