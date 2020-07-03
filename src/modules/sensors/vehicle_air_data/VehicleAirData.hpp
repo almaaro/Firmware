@@ -49,11 +49,8 @@
 #include <uORB/topics/sensor_baro.h>
 #include <uORB/topics/sensor_correction.h>
 #include <uORB/topics/vehicle_air_data.h>
-<<<<<<< HEAD
 #include <uORB/topics/airspeed.h>
-=======
 #include <uORB/topics/vehicle_control_mode.h>
->>>>>>> qnh-change-mid-flight
 
 class VehicleAirData : public ModuleParams, public px4::ScheduledWorkItem
 {
