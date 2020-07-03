@@ -213,30 +213,43 @@ void VehicleAirData::Run()
 		// current pressure at MSL in kPa (QNH in hPa)
 		const float p1 = _param_sens_baro_qnh.get() * 0.1f;
 
-                /* Rate limited changing of QNH */
-                /* allow a max of 0,1s difference between updates */
-                float baro_dt = hrt_elapsed_time(&_baro_qnh_last_update_t);
-                if (baro_dt > 100000) {
-                        baro_dt = 100000;
-                }
-                _baro_qnh_last_update_t = hrt_absolute_time();
+		/* Rate limited changing of QNH */
+		/* allow a max of 0,1s difference between updates */
+		float baro_dt = hrt_elapsed_time(&_baro_qnh_last_update_t);
+		if (baro_dt > 100000) {
+				baro_dt = 100000;
+		}
+		_baro_qnh_last_update_t = hrt_absolute_time();
 
-                /* parameter determining the rate of change in hPa/min, variable in kPa/min */
-                const float qnh_rate = _param_sens_qnh_rate.get() * 0.1f;
+		/* parameter determining the rate of change in hPa/min, variable in kPa/min */
+		const float qnh_rate = _param_sens_qnh_rate.get() * 0.1f;
 
-                /* _baro_qnh_rate_limited is a rate-limited version of p1 */
-                if (_baro_qnh_rate_limited > p1 + 0.001f) {
-                        _baro_qnh_rate_limited = _baro_qnh_rate_limited - baro_dt / 1000000 / 60 * qnh_rate;
+		/* _baro_qnh_rate_limited is a rate-limited version of p1 */
+		if (_p1_rate_limited > p1 + 0.001f) {
+				_p1_rate_limited = _p1_rate_limited - baro_dt / 1000000 / 60 * qnh_rate;
 
-                } else if (_baro_qnh_rate_limited < p1 - 0.001f) {
+		} else if (_p1_rate_limited < p1 - 0.001f) {
 
-                        // this happens at boot when _baro_qnh_rate_limited is 0 and p1 is for example 1013.25.
-                        if (p1 - _baro_qnh_rate_limited > 50) {
-                                _baro_qnh_rate_limited = p1;
-                        }
+				// this happens at boot when _baro_qnh_rate_limited is 0 and p1 is for example 1013.25.
+				if (p1 - _p1_rate_limited > 50) {
+						_p1_rate_limited = p1;
+				}
 
-                        _baro_qnh_rate_limited = _baro_qnh_rate_limited + baro_dt / 1000000 / 60 * qnh_rate;
-                }
+				_p1_rate_limited = _p1_rate_limited + baro_dt / 1000000 / 60 * qnh_rate;
+		}
+
+		// If the vehicle is disarmed, update the qnh immediately
+		if (_control_mode_sub.updated()) {
+
+			control_mode_s control_mode;
+
+			if (_control_mode_sub.copy(&control_mode)) {
+
+				if (!control_mode.flag_armed) {
+					_p1_rate_limited = p1;
+				}
+			}
+		}
 
 		// measured pressure in kPa
 		const float p = out.baro_pressure_pa * 0.001f;
@@ -250,7 +263,7 @@ void VehicleAirData::Run()
 		 * h = -------------------------------  + h1
 		 *                   a
 		 */
-                out.baro_alt_meter = (((powf((p / _baro_qnh_rate_limited), (-(a * CONSTANTS_AIR_GAS_CONST) / CONSTANTS_ONE_G))) * T1) - T1) / a;
+		out.baro_alt_meter = (((powf((p / _p1_rate_limited), (-(a * CONSTANTS_AIR_GAS_CONST) / CONSTANTS_ONE_G))) * T1) - T1) / a;
 
 		// calculate air density
 		// estimate air density assuming typical 20degC ambient temperature
