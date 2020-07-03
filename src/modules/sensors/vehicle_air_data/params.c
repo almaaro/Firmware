@@ -34,12 +34,12 @@
 /**
  * QNH for barometer
  *
+ * Disarm vehicle to get instant effect.
+ *
  * @min 500
  * @max 1500
  * @group Sensors
  * @unit hPa
- *
- * @reboot_required true
  *
  */
 PARAM_DEFINE_FLOAT(SENS_BARO_QNH, 1013.25f);

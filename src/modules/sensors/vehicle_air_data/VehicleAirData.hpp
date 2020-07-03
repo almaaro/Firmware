@@ -49,7 +49,11 @@
 #include <uORB/topics/sensor_baro.h>
 #include <uORB/topics/sensor_correction.h>
 #include <uORB/topics/vehicle_air_data.h>
+<<<<<<< HEAD
 #include <uORB/topics/airspeed.h>
+=======
+#include <uORB/topics/vehicle_control_mode.h>
+>>>>>>> qnh-change-mid-flight
 
 class VehicleAirData : public ModuleParams, public px4::ScheduledWorkItem
 {
@@ -83,6 +87,7 @@ private:
 	uORB::Subscription _params_sub{ORB_ID(parameter_update)};
 	uORB::Subscription _sensor_correction_sub{ORB_ID(sensor_correction)};
 	uORB::Subscription _airspeed_sub{ORB_ID(airspeed)};
+	uORB::Subscription _control_mode_sub{ORB_ID(vehicle_control_mode)};
 
 	uORB::SubscriptionCallbackWorkItem _sensor_sub[MAX_SENSOR_COUNT] {
 		{this, ORB_ID(sensor_baro), 0},
@@ -112,6 +117,6 @@ private:
 	airspeed_s _airspeed{};
 
 	/* baro qnh changes */
-	float _baro_qnh_rate_limited{0.0f};
+	float _p1_rate_limited{0.0f};
 	hrt_abstime _baro_qnh_last_update_t{0};
 };
